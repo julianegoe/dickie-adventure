@@ -1,0 +1,17 @@
+{
+  "star": {
+    "name": "star",
+    "look_at_text": "Hö? Was macht dieser Stern hier?",
+    "take_text": [ "Es ist ein Stern.", "Er besteht aus Licht.", "Wie soll ich das einpacken?"]
+  },
+  "ice": {
+    "name": "ice",
+    "look_at_text": "Ganz schön kalt hier.",
+    "take_text": "Ernsthaft?"
+  },
+  "fish": {
+    "name": "fish",
+    "look_at_text": "Challo. Das sieht lecker aus.",
+    "take_text": "Will chaben"
+  }
+}

@@ -1,4 +1,4 @@
-import {AnimationKeys, SceneKeys, TextureKeys} from "@/constants";
+import { AnimationKeys, SceneKeys, TextureKeys } from "@/constants";
 
 export class PreloadScene extends Phaser.Scene {
     constructor() {
@@ -40,7 +40,11 @@ export class PreloadScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image(TextureKeys.Ice, 'src/assets/scene01_background.png');
+        // load the PNG file
+        this.load.image(TextureKeys.Ice, 'src/assets/background_arctic.png')
+
+        // load the JSON file
+        this.load.tilemapTiledJSON('tilemap', 'src/assets/background_arctic.json')
         this.load.image(TextureKeys.Bubble, 'src/assets/bubble.png');
         this.load.image(TextureKeys.Star, 'src/assets/star.png');
         this.load.image(TextureKeys.Fish, 'src/assets/fish.png');

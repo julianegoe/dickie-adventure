@@ -81,7 +81,6 @@ export class GameScene extends Phaser.Scene {
         this.gameWidth = this.scale.width;
         this.gameHeight = this.scale.height;
         this.cameras.main.setBackgroundColor('#e0eef2');
-        this.cameras.main.setZoom(1.3)
         this.physics.world.setBounds(0, 0, this.gameWidth, this.gameHeight);
         this.target = new Phaser.Math.Vector2();
         //this.hitArea = new Phaser.Geom.Polygon("160 239 522 249 748 306 834 296 859 323 871 387 830 414 739 383 634 431 514 454 413 434 315 463 295 413 261 436 192 464 112 457 78 412 14 400 21 332 139 277 162 242");

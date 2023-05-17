@@ -25,7 +25,7 @@ onUnmounted(() => {
 <template>
     <div :id="containerId" />
     <div v-if="gameStore.isGameScene" class="inventory">
-        <div class="inventory-slot" v-for="item in inventoryStore.items" :key="item">
+        <div class="inventory-slot" v-for="item in inventoryStore.items" :key="item.name">
             <img v-show="item.isInInventory" class="inventory-item" :src="`src/assets/${item.name}.png`" :alt="item.name">
         </div>
     </div>

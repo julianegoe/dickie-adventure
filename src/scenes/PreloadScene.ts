@@ -41,18 +41,18 @@ export class PreloadScene extends Phaser.Scene {
 
     preload() {
         // load the PNG file
-        this.load.image(TextureKeys.Ice, 'src/assets/background_arctic.png')
+        this.load.image(TextureKeys.Ice, '/background_arctic.png')
 
         // load the JSON file
-        this.load.tilemapTiledJSON('tilemap', 'src/assets/background_arctic.json')
-        this.load.image(TextureKeys.Bubble, 'src/assets/bubble.png');
-        this.load.image(TextureKeys.Star, 'src/assets/star.png');
-        this.load.image(TextureKeys.Fish, 'src/assets/fish.png');
-        this.load.image(TextureKeys.LookAt, 'src/assets/lookat.png');
-        this.load.image(TextureKeys.Take, 'src/assets/take.png');
-        this.load.image(TextureKeys.Inventory, 'src/assets/inventory.png');
-        this.load.atlas(TextureKeys.DickieIdle, "src/assets/dickie_idle.png", "src/assets/dickie_idle.json");
-        this.load.atlas(TextureKeys.DickieMove, "src/assets/dickie_move.png", "src/assets/dickie_move.json");
+        this.load.tilemapTiledJSON('tilemap', '/background_arctic.json')
+        this.load.image(TextureKeys.Bubble, '/bubble.png');
+        this.load.image(TextureKeys.Star, '/star.png');
+        this.load.image(TextureKeys.Fish, '/fish.png');
+        this.load.image(TextureKeys.LookAt, '/lookat.png');
+        this.load.image(TextureKeys.Take, '/take.png');
+        this.load.image(TextureKeys.Inventory, '/inventory.png');
+        this.load.atlas(TextureKeys.DickieIdle, "/dickie_idle.png", "/dickie_idle.json");
+        this.load.atlas(TextureKeys.DickieMove, "/dickie_move.png", "/dickie_move.json");
         [TextureKeys.Star, TextureKeys.Fish].forEach((key) => {
             this.load.json({
                 key: key,
@@ -64,7 +64,7 @@ export class PreloadScene extends Phaser.Scene {
 
     create() {
         this.createAnimations();
-        this.input.setDefaultCursor('url(src/assets/crosshair.cur), pointer');
+        this.input.setDefaultCursor('url(/crosshair.cur), pointer');
         this.scene.start(SceneKeys.Game);
     }
 }

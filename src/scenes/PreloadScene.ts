@@ -41,18 +41,18 @@ export class PreloadScene extends Phaser.Scene {
 
     preload() {
         // load the PNG file
-        this.load.image(TextureKeys.Ice, '/background_arctic.png')
+        this.load.image(TextureKeys.Ice, 'background_arctic.png')
 
         // load the JSON file
-        this.load.tilemapTiledJSON('tilemap', '/background_arctic.json')
-        this.load.image(TextureKeys.Bubble, '/bubble.png');
-        this.load.image(TextureKeys.Star, '/star.png');
-        this.load.image(TextureKeys.Fish, '/fish.png');
-        this.load.image(TextureKeys.LookAt, '/lookat.png');
-        this.load.image(TextureKeys.Take, '/take.png');
-        this.load.image(TextureKeys.Inventory, '/inventory.png');
-        this.load.atlas(TextureKeys.DickieIdle, "/dickie_idle.png", "/dickie_idle.json");
-        this.load.atlas(TextureKeys.DickieMove, "/dickie_move.png", "/dickie_move.json");
+        this.load.tilemapTiledJSON('tilemap', 'background_arctic.json')
+        this.load.image(TextureKeys.Bubble, 'bubble.png');
+        this.load.image(TextureKeys.Star, 'star.png');
+        this.load.image(TextureKeys.Fish, 'fish.png');
+        this.load.image(TextureKeys.LookAt, 'lookat.png');
+        this.load.image(TextureKeys.Take, 'take.png');
+        this.load.image(TextureKeys.Inventory, 'inventory.png');
+        this.load.atlas(TextureKeys.DickieIdle, "dickie_idle.png", "dickie_idle.json");
+        this.load.atlas(TextureKeys.DickieMove, "dickie_move.png", "dickie_move.json");
         [TextureKeys.Star, TextureKeys.Fish].forEach((key) => {
             this.load.json({
                 key: key,

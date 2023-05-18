@@ -12,6 +12,7 @@ export class BootScene extends Phaser.Scene {
         const startText = this.add.text(this.game.config.width as number / 2, this.game.config.height as number / 2, 'START', {
             fontSize: '64px',
             color: "#000000",
+            fontFamily: "'Press Start 2P'"
         }).setOrigin(0.5);
 
         // Make the text interactive

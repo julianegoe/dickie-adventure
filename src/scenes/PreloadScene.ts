@@ -1,4 +1,5 @@
-import { AnimationKeys, AudioKeys, SceneKeys, TextureKeys, TilemapKeys } from "@/constants";
+import { AnimationKeys, AudioKeys, SceneKeys, TextureKeys } from "@/constants";
+import WebFontFile from '@/helpers/WebFontFile'
 
 export class PreloadScene extends Phaser.Scene {
     constructor() {
@@ -27,6 +28,16 @@ export class PreloadScene extends Phaser.Scene {
             repeat: -1,
             frameRate: 8,
         });
+        this.anims.create({
+            key: 'idle',
+            frames: this.anims.generateFrameNames(TextureKeys.DickieMove, {
+                prefix: AnimationKeys.DickieIdle,
+                end: 1,
+                zeroPad: 3,
+            }),
+            repeat: -1,
+            frameRate: 2,
+        });
     }
 
     preload() {
@@ -34,7 +45,7 @@ export class PreloadScene extends Phaser.Scene {
         // this.load.image(TextureKeys.Ice, '/background/mountains.png')
         // load the JSON file
         // this.load.tilemapTiledJSON(TilemapKeys.Mountains, '/background/mountains.json')
-
+        this.load.addFile(new WebFontFile(this.load, 'VT323'))
         this.load.image(TextureKeys.Bubble, 'bubble.png');
         this.load.image(TextureKeys.Mountains, 'background/mountain_tile.png');
         this.load.image(TextureKeys.Foreground, 'background/foreground.png');

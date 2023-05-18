@@ -36,7 +36,7 @@ enum SceneKeys {
 enum AnimationKeys {
     DickieMoveLeft = 'move_left_',
     DickieMoveRight = 'move_right_',
-    DickieIdle = 'dickie_idle_'
+    DickieIdle = 'idle_'
 }
 
 enum AudioKeys {

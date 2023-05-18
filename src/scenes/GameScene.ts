@@ -119,6 +119,17 @@ export class GameScene extends Phaser.Scene {
                 this.scene.stop(SceneKeys.InteractionMenu);
                 this.isInteractionMenuOpen = false;
             }
+        });
+
+        const gameText1 = this.add.text(this.gameWidth * 2, 200, 'Challo?', {
+            fontSize: '16px',
+            fontFamily: "'Press Start 2P'",
+            color: "#000000",
+        })
+        const gameText2 = this.add.text(this.gameWidth * 3, 200, 'Ist da jemand?', {
+            fontSize: '16px',
+            fontFamily: "'Press Start 2P'",
+            color: "#000000",
         })
         /* this.star.onInteract((location) => {
             this.scene.launch(SceneKeys.InteractionMenu, {
@@ -141,28 +152,24 @@ export class GameScene extends Phaser.Scene {
             this.isInteractionMenuOpen = true;
         });
         this.star.changeSizeOnHover(3, 3.5);
-        this.fish.changeSizeOnHover(2, 2.5);
-        this.walkable.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
-            console.log
-            this.physics.moveToObject(this.player, { x: pointer.x, y: pointer.y }, 200);
-        }) */
+        this.fish.changeSizeOnHover(2, 2.5); */
     }
 
-    update() {
+    update(dt: number) {
         /* this.star.setVisible(this.isItemVisible(TextureKeys.Star));
         this.fish.setVisible(this.isItemVisible(TextureKeys.Fish)); */
         if (this.cursors?.left.isDown) {
-            this.velocityX -= 3;
+            this.velocityX -= 2.5;
 
             this.player.anims.play('left', true);
         }
         else if (this.cursors?.right.isDown) {
-            this.velocityX += 3;
+            this.velocityX += 2.5;
 
             this.player.anims.play('right', true);
         } else {
             this.velocityX += 0;
-            this.player.anims.stop();
+            this.player.anims.play('idle', true)
         }
         this.player.x = this.velocityX
 

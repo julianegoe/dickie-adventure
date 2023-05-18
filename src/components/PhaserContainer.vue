@@ -25,12 +25,12 @@ onUnmounted(() => {
 <template>
     <div class="game-screen">
         <div :id="containerId" />
-        <div v-if="gameStore.isGameScene" class="inventory">
+        <!-- <div v-if="gameStore.isGameScene" class="inventory">
             <div class="inventory-slot" v-for="item in inventoryStore.items" :key="item.name">
                 <img v-show="item.isInInventory" class="inventory-item" :src="`${item.name}.png`"
                     :alt="item.name">
             </div>
-        </div>
+        </div> -->
     </div>
 </template>
 <style scoped>
@@ -41,6 +41,7 @@ onUnmounted(() => {
 .game-screen {
     display: flex;
     flex-direction: column;
+    margin-bottom: 4rem;
 }
 
 .inventory {

@@ -1,4 +1,4 @@
-import { AnimationKeys, SceneKeys, TextureKeys } from "@/constants";
+import { AnimationKeys, SceneKeys, TextureKeys, TilemapKeys } from "@/constants";
 
 export class PreloadScene extends Phaser.Scene {
     constructor() {
@@ -10,8 +10,8 @@ export class PreloadScene extends Phaser.Scene {
             key: 'left',
             frames: this.anims.generateFrameNames(TextureKeys.DickieMove, {
                 prefix: AnimationKeys.DickieMoveLeft,
-                end: 4,
-                zeroPad: 4,
+                end: 3,
+                zeroPad: 3,
             }),
             repeat: -1,
             frameRate: 8,
@@ -21,18 +21,8 @@ export class PreloadScene extends Phaser.Scene {
             key: 'right',
             frames: this.anims.generateFrameNames(TextureKeys.DickieMove, {
                 prefix: AnimationKeys.DickieMoveRight,
-                end: 4,
-                zeroPad: 4,
-            }),
-            repeat: -1,
-            frameRate: 8,
-        });
-        this.anims.create({
-            key: 'idle',
-            frames: this.anims.generateFrameNames(TextureKeys.DickieIdle, {
-                prefix: AnimationKeys.DickieIdle,
-                end: 2,
-                zeroPad: 4,
+                end: 3,
+                zeroPad: 3,
             }),
             repeat: -1,
             frameRate: 8,
@@ -41,18 +31,21 @@ export class PreloadScene extends Phaser.Scene {
 
     preload() {
         // load the PNG file
-        this.load.image(TextureKeys.Ice, 'background_arctic.png')
-
+        // this.load.image(TextureKeys.Ice, '/background/mountains.png')
         // load the JSON file
-        this.load.tilemapTiledJSON('tilemap', 'background_arctic.json')
+        // this.load.tilemapTiledJSON(TilemapKeys.Mountains, '/background/mountains.json')
+
         this.load.image(TextureKeys.Bubble, 'bubble.png');
+        this.load.image(TextureKeys.Mountains, '/background/mountain_tile.png');
+        this.load.image(TextureKeys.Foreground, '/background/foreground.png');
+        this.load.image(TextureKeys.Ground, '/background/ground.png');
+        this.load.image(TextureKeys.Snow, 'snowflake.png');
         this.load.image(TextureKeys.Star, 'star.png');
         this.load.image(TextureKeys.Fish, 'fish.png');
         this.load.image(TextureKeys.LookAt, 'lookat.png');
         this.load.image(TextureKeys.Take, 'take.png');
         this.load.image(TextureKeys.Inventory, 'inventory.png');
-        this.load.atlas(TextureKeys.DickieIdle, "dickie_idle.png", "dickie_idle.json");
-        this.load.atlas(TextureKeys.DickieMove, "dickie_move.png", "dickie_move.json");
+        this.load.atlas(TextureKeys.DickieMove, "/dickie_version_2/dickie_move.png", "/dickie_version_2/dickie_move.json");
         [TextureKeys.Star, TextureKeys.Fish].forEach((key) => {
             this.load.json({
                 key: key,

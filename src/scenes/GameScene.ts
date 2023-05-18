@@ -1,4 +1,4 @@
-import { SceneKeys, TextureKeys } from "@/constants";
+import { SceneKeys, TextureKeys, TilemapKeys, TilesetKeys } from "@/constants";
 import InteractiveItem from "../objects/InteractiveItem";
 import { useInventoryStore } from "@/stores/inventory";
 import { useGameStore } from "@/stores/gameStore";
@@ -7,7 +7,10 @@ import Rectangle = Phaser.Geom.Rectangle;
 import Vector2 = Phaser.Math.Vector2;
 export class GameScene extends Phaser.Scene {
 
-    private player!: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
+    private cursors!: Phaser.Types.Input.Keyboard.CursorKeys | undefined;
+    private velocityX: number = 0;
+    private backgrounds: { ratioX: number, sprite: Phaser.GameObjects.TileSprite }[] = [];
+    private player!: Phaser.GameObjects.Sprite;
     private ice!: Phaser.Types.Physics.Arcade.SpriteWithStaticBody;
     private gameWidth!: number;
     private gameHeight!: number;
@@ -17,53 +20,42 @@ export class GameScene extends Phaser.Scene {
     private inventoryStore!: any;
     private star!: InteractiveItem;
     private fish!: InteractiveItem;
-    private hitArea!: Polygon | Rectangle;
-    private walkable!: any;
 
     constructor() {
         super({ key: 'GameScene' });
     }
 
-    createBubbleEmitter(texture: string) {
-        this.emitZone = {
-            source: new Phaser.Geom.Rectangle(0, 0, 32, 32) as Phaser.Types.GameObjects.Particles.RandomZoneSource,
-            type: "random"
-        };
-        return this.add.particles(0, 0, texture, {
-            moveToX: 0,
-            active: true,
-            speed: 500,
-            maxVelocityX: 40,
-            quantity: 1,
-            duration: 3000,
-            scale: { start: 0.9, end: 0 },
-            frequency: 80,
-            emitZone: this.emitZone,
-        })
-    }
-
-    createWalkableArea(texture: string) {
-        return this.add.rectangle(0, this.gameHeight / 1.7, this.gameWidth, 240)
-        .setOrigin(0)
-        .setInteractive(this.hitArea, (shape: Rectangle) => {
-            return shape.contains(this.target.x, this.target.y)
-        })
-    }
-
     createPlayer() {
-        return this.physics.add.sprite(this.gameWidth / 2, this.gameHeight / 1.5, TextureKeys.DickieMove, 0).setScale(3, 3);
+        return this.add.sprite(100, this.gameHeight - 100, TextureKeys.DickieMove)
+            .setOrigin(0)
+            .setScale(2)
     }
 
     createBackground() {
+        this.backgrounds.push({
+            ratioX: 0.2,
+            sprite: this.add.tileSprite(0, this.gameHeight - 264, this.gameWidth, 64, TextureKeys.Mountains)
+                .setOrigin(0)
+                .setScrollFactor(0),
+        });
+        this.backgrounds.push({
+            ratioX: 0.3,
+            sprite: this.add.tileSprite(0, this.gameHeight - 200, this.gameWidth, this.gameHeight / 2, TextureKeys.Ground)
+                .setOrigin(0)
+                .setScrollFactor(0)
+        })
+        this.backgrounds.push({
+            ratioX: 0.9,
+            sprite: this.add.tileSprite(0, this.gameHeight - 136, this.gameWidth, 128, TextureKeys.Foreground)
+                .setOrigin(0)
+                .setScrollFactor(0)
+        });
         // create the Tilemap
-        const map = this.make.tilemap({ key: 'tilemap' })
-
+        //const map = this.make.tilemap({ key: TilemapKeys.Mountains })
         // add the tileset image we are using
-        const tileset = map.addTilesetImage('background_arctic', TextureKeys.Ice) as Phaser.Tilemaps.Tileset
-
+        //const tileset = map.addTilesetImage(TilesetKeys.Mountains, TextureKeys.Ice) as Phaser.Tilemaps.Tileset
         // create the layers we want in the right order
-        map.createLayer("ice", tileset)?.setScale(2.5);
-        return {map, tileset};
+        //map.createLayer("mountains", tileset)?.setPosition(0, this.gameHeight / 2);
     }
 
     createInterActiveItem(texture: string, position: Vector2, scale: number) {
@@ -80,20 +72,31 @@ export class GameScene extends Phaser.Scene {
         this.inventoryStore = useInventoryStore();
         this.gameWidth = this.scale.width;
         this.gameHeight = this.scale.height;
-        this.cameras.main.setBackgroundColor('#e0eef2');
-        this.physics.world.setBounds(0, 0, this.gameWidth, this.gameHeight);
-        this.target = new Phaser.Math.Vector2();
-        //this.hitArea = new Phaser.Geom.Polygon("160 239 522 249 748 306 834 296 859 323 871 387 830 414 739 383 634 431 514 454 413 434 315 463 295 413 261 436 192 464 112 457 78 412 14 400 21 332 139 277 162 242");
-        this.hitArea = new Phaser.Geom.Rectangle(0, this.gameHeight / 1.7, this.gameWidth, 240)
+        this.cursors = this.input.keyboard?.createCursorKeys();
+
         // Create Sprites
-        this.walkable = this.createWalkableArea(TextureKeys.Ice);
-        const tilemap = this.createBackground();
+        //  Set the camera and physics bounds to be the size of 4x4 bg images
+        /* this.cameras.main.setBounds(0,0, this.gameWidth, this.gameHeight);
+        this.physics.world.setBounds(0,0, this.gameWidth, this.gameHeight); */
+        const myCam = this.cameras.main;
+        myCam.setBackgroundColor('#dce2ed').setZoom(1.3);
+        myCam.setBounds(0, 0, this.gameWidth * 5, this.gameHeight);
+
+        this.createBackground();
         this.player = this.createPlayer();
-        tilemap.map.createLayer("water", tilemap.tileset)?.setScale(2.5);
-        this.star = this.createInterActiveItem(TextureKeys.Star, new Phaser.Math.Vector2(200, 300), 3);
-        this.fish = this.createInterActiveItem(TextureKeys.Fish, new Phaser.Math.Vector2(300, 300), 2);
-        this.add.existing(this.star);
-        this.add.existing(this.fish);
+        myCam.startFollow(this.player, true, 0.05, 0.05);
+        
+        this.target = new Phaser.Math.Vector2();
+         this.scene.launch(SceneKeys.Snowfall, {
+             player: this.player,
+         });
+
+        //this.hitArea = new Phaser.Geom.Rectangle(0, this.gameHeight / 1.7, this.gameWidth, 240)
+
+        //this.star = this.createInterActiveItem(TextureKeys.Star, new Phaser.Math.Vector2(200, 300), 3);
+        //this.fish = this.createInterActiveItem(TextureKeys.Fish, new Phaser.Math.Vector2(300, 300), 2);
+        //this.add.existing(this.star);
+        //this.add.existing(this.fish);
 
         // Game Objects Events
         this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
@@ -104,7 +107,7 @@ export class GameScene extends Phaser.Scene {
                 this.isInteractionMenuOpen = false;
             }
         })
-        this.star.onInteract((location) => {
+        /* this.star.onInteract((location) => {
             this.scene.launch(SceneKeys.InteractionMenu, {
                 location: {
                     x: location.x,
@@ -129,15 +132,33 @@ export class GameScene extends Phaser.Scene {
         this.walkable.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
             console.log
             this.physics.moveToObject(this.player, { x: pointer.x, y: pointer.y }, 200);
-        })
+        }) */
     }
 
     update() {
-        this.star.setVisible(this.isItemVisible(TextureKeys.Star));
-        this.fish.setVisible(this.isItemVisible(TextureKeys.Fish));
-        const tolerance = 3;
-        const distance = Phaser.Math.Distance.BetweenPoints({ x: this.player?.x, y: this.player?.y }, this.target);
-        if (this.hitArea.contains(this.target.x, this.target.y)) {
+        /* this.star.setVisible(this.isItemVisible(TextureKeys.Star));
+        this.fish.setVisible(this.isItemVisible(TextureKeys.Fish)); */
+        if (this.cursors?.left.isDown) {
+            this.velocityX -= 3;
+
+            this.player.anims.play('left', true);
+        }
+        else if (this.cursors?.right.isDown) {
+            this.velocityX += 3;
+
+            this.player.anims.play('right', true);
+        } else {
+            this.velocityX += 0;
+            this.player.anims.stop();
+        }
+        this.player.x = this.velocityX
+
+        for (let i = 0; i < this.backgrounds.length; ++i) {
+			const bg = this.backgrounds[i]
+
+			bg.sprite.tilePositionX = this.cameras.main.scrollX * bg.ratioX
+		}
+        /* if (this.hitArea.contains(this.target.x, this.target.y)) {
             if (this.player && this.player?.body.speed > 0) {
                 if (distance < tolerance) {
                     this.player?.body.reset(this.target.x, this.target.y);
@@ -152,6 +173,6 @@ export class GameScene extends Phaser.Scene {
         } else {
             this.player?.body.setVelocity(0, 0);
             this.player.anims.stop();
-        }
+        } */
     }
 }

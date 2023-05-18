@@ -1,7 +1,7 @@
 {
     "frames": [
         {
-            "filename": "dickie_move_right_0001",
+            "filename": "move_right_001",
             "frame": {
                 "x": 0,
                 "y": 11,
@@ -22,7 +22,7 @@
             }
         },
         {
-            "filename": "dickie_move_right_0002",
+            "filename": "move_right_002",
             "frame": {
                 "x": 44,
                 "y": 11,
@@ -43,7 +43,7 @@
             }
         },
         {
-            "filename": "dickie_move_right_0003",
+            "filename": "move_right_003",
             "frame": {
                 "x": 88,
                 "y": 11,
@@ -64,7 +64,7 @@
             }
         },
         {
-            "filename": "dickie_move_right_0004",
+            "filename": "move_right_004",
             "frame": {
                 "x": 132,
                 "y": 11,
@@ -85,7 +85,7 @@
             }
         },
         {
-            "filename": "dickie_move_left_0001",
+            "filename": "move_left_001",
             "frame": {
                 "x": 182,
                 "y": 11,
@@ -106,7 +106,7 @@
             }
         },
         {
-            "filename": "dickie_move_left_0002",
+            "filename": "move_left_002",
             "frame": {
                 "x": 225,
                 "y": 11,
@@ -127,7 +127,7 @@
             }
         },
         {
-            "filename": "dickie_move_left_0003",
+            "filename": "move_left_003",
             "frame": {
                 "x": 268,
                 "y": 11,
@@ -148,7 +148,7 @@
             }
         },
         {
-            "filename": "dickie_move_left_0004",
+            "filename": "move_left_004",
             "frame": {
                 "x": 311,
                 "y": 11,

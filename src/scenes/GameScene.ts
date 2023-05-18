@@ -1,4 +1,4 @@
-import { SceneKeys, TextureKeys, TilemapKeys, TilesetKeys } from "@/constants";
+import { AudioKeys, SceneKeys, TextureKeys, TilemapKeys, TilesetKeys } from "@/constants";
 import InteractiveItem from "../objects/InteractiveItem";
 import { useInventoryStore } from "@/stores/inventory";
 import { useGameStore } from "@/stores/gameStore";
@@ -8,10 +8,10 @@ import Vector2 = Phaser.Math.Vector2;
 export class GameScene extends Phaser.Scene {
 
     private cursors!: Phaser.Types.Input.Keyboard.CursorKeys | undefined;
+    private windSound!: Phaser.Sound.NoAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.WebAudioSound;
     private velocityX: number = 0;
     private backgrounds: { ratioX: number, sprite: Phaser.GameObjects.TileSprite }[] = [];
     private player!: Phaser.GameObjects.Sprite;
-    private ice!: Phaser.Types.Physics.Arcade.SpriteWithStaticBody;
     private gameWidth!: number;
     private gameHeight!: number;
     private target = { x: 0, y: 0 };
@@ -66,6 +66,10 @@ export class GameScene extends Phaser.Scene {
         return this.inventoryStore.items.find((item: any) => item.name === itemName)?.isInGame
     }
 
+    addSounds() {
+        this.windSound = this.sound.add(AudioKeys.ArcticWinds)
+    }
+
     create() {
         const gameStore = useGameStore();
         gameStore.setGameScene(true);
@@ -73,7 +77,16 @@ export class GameScene extends Phaser.Scene {
         this.gameWidth = this.scale.width;
         this.gameHeight = this.scale.height;
         this.cursors = this.input.keyboard?.createCursorKeys();
-
+        this.addSounds();
+        this.windSound.play({
+            mute: false,
+            volume: 2,
+            rate: 1,
+            detune: 0,
+            seek: 0,
+            loop: true,
+            delay: 0,
+        })
         // Create Sprites
         //  Set the camera and physics bounds to be the size of 4x4 bg images
         /* this.cameras.main.setBounds(0,0, this.gameWidth, this.gameHeight);

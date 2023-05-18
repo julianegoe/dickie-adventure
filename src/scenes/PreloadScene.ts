@@ -1,4 +1,4 @@
-import { AnimationKeys, SceneKeys, TextureKeys, TilemapKeys } from "@/constants";
+import { AnimationKeys, AudioKeys, SceneKeys, TextureKeys, TilemapKeys } from "@/constants";
 
 export class PreloadScene extends Phaser.Scene {
     constructor() {
@@ -45,14 +45,15 @@ export class PreloadScene extends Phaser.Scene {
         this.load.image(TextureKeys.LookAt, 'lookat.png');
         this.load.image(TextureKeys.Take, 'take.png');
         this.load.image(TextureKeys.Inventory, 'inventory.png');
-        this.load.atlas(TextureKeys.DickieMove, "dickie_version_2/dickie_move.png", "dickie_version_2/dickie_move.json");
+        this.load.atlas(TextureKeys.DickieMove, "dickie_version_1/dickie_move.png", "dickie_version_1/dickie_move.json");
         [TextureKeys.Star, TextureKeys.Fish].forEach((key) => {
             this.load.json({
                 key: key,
                 url: 'src/dialogues/item_texts.json',
                 dataKey: key,
             });
-        })
+        });
+        this.load.audio(AudioKeys.ArcticWinds, ['arctic_winds.ogg'])
     }
 
     create() {

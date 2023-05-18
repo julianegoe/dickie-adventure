@@ -39,6 +39,10 @@ enum AnimationKeys {
     DickieIdle = 'dickie_idle_'
 }
 
+enum AudioKeys {
+    ArcticWinds = 'arctic_winds',
+}
+
 export {
-    TextureKeys, SceneKeys, AnimationKeys, TilemapKeys, TilesetKeys
+    TextureKeys, SceneKeys, AnimationKeys, TilemapKeys, TilesetKeys, AudioKeys
 }

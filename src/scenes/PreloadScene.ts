@@ -36,16 +36,16 @@ export class PreloadScene extends Phaser.Scene {
         // this.load.tilemapTiledJSON(TilemapKeys.Mountains, '/background/mountains.json')
 
         this.load.image(TextureKeys.Bubble, 'bubble.png');
-        this.load.image(TextureKeys.Mountains, '/background/mountain_tile.png');
-        this.load.image(TextureKeys.Foreground, '/background/foreground.png');
-        this.load.image(TextureKeys.Ground, '/background/ground.png');
+        this.load.image(TextureKeys.Mountains, 'background/mountain_tile.png');
+        this.load.image(TextureKeys.Foreground, 'background/foreground.png');
+        this.load.image(TextureKeys.Ground, 'background/ground.png');
         this.load.image(TextureKeys.Snow, 'snowflake.png');
         this.load.image(TextureKeys.Star, 'star.png');
         this.load.image(TextureKeys.Fish, 'fish.png');
         this.load.image(TextureKeys.LookAt, 'lookat.png');
         this.load.image(TextureKeys.Take, 'take.png');
         this.load.image(TextureKeys.Inventory, 'inventory.png');
-        this.load.atlas(TextureKeys.DickieMove, "/dickie_version_2/dickie_move.png", "/dickie_version_2/dickie_move.json");
+        this.load.atlas(TextureKeys.DickieMove, "dickie_version_2/dickie_move.png", "dickie_version_2/dickie_move.json");
         [TextureKeys.Star, TextureKeys.Fish].forEach((key) => {
             this.load.json({
                 key: key,

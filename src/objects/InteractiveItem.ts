@@ -3,7 +3,7 @@ import Phaser, {Scene} from 'phaser'
 export default class InteractiveItem extends Phaser.GameObjects.Sprite {
     constructor(scene: Scene, x: number, y: number, texture: string) {
         super(scene, x, y, texture)
-        this.setInteractive({ cursor: 'url(src/assets/interact.cur), pointer' });
+        this.setInteractive({ cursor: 'url(interact.cur), pointer' });
     }
 
     changeSizeOnHover(scaleBasis: number, scaleFactor:number) {

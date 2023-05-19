@@ -1,4 +1,4 @@
-import { AudioKeys, SceneKeys, TextureKeys, TilemapKeys, TilesetKeys } from "@/constants";
+import { AnimationKeys, AudioKeys, SceneKeys, TextureKeys, TilemapKeys, TilesetKeys } from "@/constants";
 import InteractiveItem from "../objects/InteractiveItem";
 import { useInventoryStore } from "@/stores/inventory";
 import { useGameStore } from "@/stores/gameStore";
@@ -12,10 +12,11 @@ export class GameScene extends Phaser.Scene {
     private velocityX: number = 0;
     private backgrounds: { ratioX: number, sprite: Phaser.GameObjects.TileSprite }[] = [];
     private player!: Phaser.GameObjects.Sprite;
+    private tent!: InteractiveItem;
+    private sealGroup!: Phaser.GameObjects.Group;
     private gameWidth!: number;
     private gameHeight!: number;
     private target = { x: 0, y: 0 };
-    private emitZone!: Phaser.Types.GameObjects.Particles.ParticleEmitterRandomZoneConfig;
     private isInteractionMenuOpen: boolean = false;
     private inventoryStore!: any;
     private star!: InteractiveItem;
@@ -29,6 +30,36 @@ export class GameScene extends Phaser.Scene {
         return this.add.sprite(100, this.gameHeight - 100, TextureKeys.DickieMove)
             .setOrigin(0)
             .setScale(2)
+    }
+
+    createNpc() {
+        this.anims.create({
+            key: 'npc_left',
+            frames: this.anims.generateFrameNames(TextureKeys.Seal, {
+                prefix: AnimationKeys.DickieMoveLeft,
+                end: 3,
+                zeroPad: 3,
+            }),
+            repeat: -1,
+            frameRate: 7,
+        });
+        this.sealGroup = this.add.group();
+        const seal = this.add.sprite(200, this.gameHeight - 140, TextureKeys.Seal)
+            .setOrigin(0)
+            .setScale(0.5);
+        const seal2 = this.add.sprite(230, this.gameHeight - 145, TextureKeys.Seal)
+            .setOrigin(0)
+            .setScale(0.5);
+        const seal3 = this.add.sprite(257, this.gameHeight - 137, TextureKeys.Seal)
+            .setOrigin(0)
+            .setScale(0.5);
+        this.sealGroup.addMultiple([
+            seal, seal2, seal3
+        ], true);
+        seal.anims.play('npc_left');
+        seal2.anims.play('npc_left');
+        seal3.anims.play('npc_left');
+        
     }
 
     createBackground() {
@@ -96,6 +127,22 @@ export class GameScene extends Phaser.Scene {
         myCam.setBounds(0, 0, this.gameWidth * 5, this.gameHeight);
 
         this.createBackground();
+        this.tent = new InteractiveItem(this, 2870, this.gameHeight - 200, TextureKeys.Tent)
+            .setOrigin(0.5)
+            .setScale(3)
+            .setScrollFactor(0.9)
+            .setVisible(this.isItemVisible(TextureKeys.Tent));
+        this.add.existing(this.tent);
+        this.tent.changeSizeOnHover(3, 3.08);
+        this.tent.onInteract((location) => {
+            console.log(location)
+        })
+
+         const explorer = this.add.sprite(2500, this.gameHeight - 290, TextureKeys.Explorer)
+         .setOrigin(0)
+         .setScale(2.4)
+         .setScrollFactor(0.9)
+         explorer.anims.play('explorer_wind');
         this.player = this.createPlayer();
         myCam.startFollow(this.player, true, 0.05, 0.05);
         
@@ -104,6 +151,9 @@ export class GameScene extends Phaser.Scene {
              player: this.player,
          });
 
+         this.createNpc();
+        
+    
         //this.hitArea = new Phaser.Geom.Rectangle(0, this.gameHeight / 1.7, this.gameWidth, 240)
 
         //this.star = this.createInterActiveItem(TextureKeys.Star, new Phaser.Math.Vector2(200, 300), 3);
@@ -126,7 +176,7 @@ export class GameScene extends Phaser.Scene {
             fontFamily: "'Press Start 2P'",
             color: "#000000",
         })
-        const gameText2 = this.add.text(this.gameWidth * 3, 200, 'Ist da jemand?', {
+        const gameText2 = this.add.text(this.gameWidth * 3, 200, 'Wo sind alle?', {
             fontSize: '16px',
             fontFamily: "'Press Start 2P'",
             color: "#000000",
@@ -156,6 +206,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     update(dt: number) {
+        this.tent.setVisible(true);
         /* this.star.setVisible(this.isItemVisible(TextureKeys.Star));
         this.fish.setVisible(this.isItemVisible(TextureKeys.Fish)); */
         if (this.cursors?.left.isDown) {
@@ -173,11 +224,14 @@ export class GameScene extends Phaser.Scene {
         }
         this.player.x = this.velocityX
 
-        for (let i = 0; i < this.backgrounds.length; ++i) {
-			const bg = this.backgrounds[i]
+        this.backgrounds.forEach((bg) => {
+            bg.sprite.tilePositionX = this.cameras.main.scrollX * bg.ratioX
+        })
 
-			bg.sprite.tilePositionX = this.cameras.main.scrollX * bg.ratioX
-		}
+        this.sealGroup.children.entries.forEach((seal) => {
+            const sealCopy = seal as Phaser.GameObjects.Sprite
+            sealCopy.x -= 0.8
+        })
         /* if (this.hitArea.contains(this.target.x, this.target.y)) {
             if (this.player && this.player?.body.speed > 0) {
                 if (distance < tolerance) {

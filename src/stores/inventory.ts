@@ -1,5 +1,6 @@
 import {ref} from 'vue'
 import {defineStore} from 'pinia'
+import { TextureKeys } from '@/constants';
 
 export const useInventoryStore = defineStore('inventory', () => {
     const items = ref<Array<{
@@ -9,6 +10,11 @@ export const useInventoryStore = defineStore('inventory', () => {
     }>>([
         {
             name: "star",
+            isInGame: true,
+            isInInventory: false,
+        },
+        {
+            name: TextureKeys.Tent,
             isInGame: true,
             isInInventory: false,
         },

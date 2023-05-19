@@ -14,6 +14,9 @@ enum TextureKeys {
     Mountains = 'mountain_tile',
     Foreground = 'foreground',
     Ground = 'ground',
+    Seal = 'seal',
+    Tent = 'tent',
+    Explorer = 'explorer',
 }
 
 enum TilemapKeys {
@@ -36,7 +39,8 @@ enum SceneKeys {
 enum AnimationKeys {
     DickieMoveLeft = 'move_left_',
     DickieMoveRight = 'move_right_',
-    DickieIdle = 'idle_'
+    DickieIdle = 'idle_',
+    ExplorerWind = 'explorer_'
 }
 
 enum AudioKeys {

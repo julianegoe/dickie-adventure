@@ -1,12 +1,12 @@
 import type { CharacterKey } from "@/constants";
 
 export interface Choices {
-    text: string;
+    text: string | string[];
     nextNode: number | null;
 }
 
 export interface IDialogue {
-    text: string[];
+    text: string[] | string;
     choices: Choices[]
 }
 
@@ -47,8 +47,8 @@ const characters: Partial<InteractiveItemInterface> = {
             {
                 text:[ "Du bist der erste Seehund, ", "der mir in letzter Zeit begegnet ist"],
                 choices: [
-                    { text: "Doof.", nextNode: 0 },
-                    { text: "Du auch der erste Polarforscher", nextNode: 0 },
+                    { text: "Doof.", nextNode: 4 },
+                    { text: "Du auch der erste Polarforscher", nextNode: 5 },
                 ]
             },
             {
@@ -56,6 +56,16 @@ const characters: Partial<InteractiveItemInterface> = {
                 choices: [
                     { text: "Bütteeeee", nextNode: 3 },
                     { text: "Ok, dann nicht.", nextNode: null }
+                ]
+            },
+            {
+                text: [ "Hmm."],
+                choices: []
+            },
+            {
+                text: [ "Und nu?"],
+                choices: [
+                    { text: ["Hilfst du mir bei der Suche", "nach meiner Familie?"], nextNode: 3 },
                 ]
             },
         ],

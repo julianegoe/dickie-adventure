@@ -15,14 +15,6 @@ export default class InteractiveCharacter extends Phaser.GameObjects.Sprite {
         this.characterData = characters[this.texture.key as CharacterKey] as CharacterData;
     }
 
-    /* public onTalkTo(callback: (location: { x: number, y: number }, characterData: CharacterData) => void) {
-        if (this.characterData.interactable) {
-            this.on('pointerdown', (location: { x: number, y: number }) => callback(location, this.characterData))
-        } else {
-            console.debug('not interactable')
-        }
-    } */
-
     public onTalkTo() {
         this.on('pointerdown', () => {
             this.dialogueManager.startDialogue(this.characterData.dialogue);

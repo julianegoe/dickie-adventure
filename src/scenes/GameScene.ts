@@ -165,12 +165,12 @@ export class GameScene extends Phaser.Scene {
 
         // Game Objects Events
 
-        const gameText1 = this.add.text(this.gameWidth * 2, 200, 'Challo?', {
+        const gameText1 = this.add.text(this.gameWidth * 1.5, 200, 'Challo?', {
             fontSize: '16px',
             fontFamily: "'Press Start 2P'",
             color: "#000000",
         })
-        const gameText2 = this.add.text(this.gameWidth * 2.5, 200, 'Wo sind alle?', {
+        const gameText2 = this.add.text(this.gameWidth * 2, 200, 'Wo sind alle?', {
             fontSize: '16px',
             fontFamily: "'Press Start 2P'",
             color: "#000000",

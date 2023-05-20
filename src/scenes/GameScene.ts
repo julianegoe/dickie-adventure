@@ -1,10 +1,11 @@
-import { AnimationKeys, AudioKeys, SceneKeys, TextureKeys, TilemapKeys, TilesetKeys } from "@/constants";
+import { AnimationKeys, AudioKeys, CharacterKey, SceneKeys, TextureKeys } from "@/constants";
 import InteractiveItem from "../objects/InteractiveItem";
 import { useInventoryStore } from "@/stores/inventory";
 import { useGameStore } from "@/stores/gameStore";
-import Polygon = Phaser.Geom.Polygon;
-import Rectangle = Phaser.Geom.Rectangle;
 import Vector2 = Phaser.Math.Vector2;
+import { type CharacterData } from "@/dialogues/characters";
+import InteractiveCharacter from "@/objects/InteractiveCharacter";
+
 export class GameScene extends Phaser.Scene {
 
     private cursors!: Phaser.Types.Input.Keyboard.CursorKeys | undefined;
@@ -17,7 +18,6 @@ export class GameScene extends Phaser.Scene {
     private gameWidth!: number;
     private gameHeight!: number;
     private target = { x: 0, y: 0 };
-    private isInteractionMenuOpen: boolean = false;
     private inventoryStore!: any;
     private star!: InteractiveItem;
     private fish!: InteractiveItem;
@@ -102,6 +102,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     create() {
+        this.lights.enable()
         const gameStore = useGameStore();
         gameStore.setGameScene(true);
         this.inventoryStore = useInventoryStore();
@@ -119,9 +120,6 @@ export class GameScene extends Phaser.Scene {
             delay: 0,
         })
         // Create Sprites
-        //  Set the camera and physics bounds to be the size of 4x4 bg images
-        /* this.cameras.main.setBounds(0,0, this.gameWidth, this.gameHeight);
-        this.physics.world.setBounds(0,0, this.gameWidth, this.gameHeight); */
         const myCam = this.cameras.main;
         myCam.setBackgroundColor('#dce2ed').setZoom(1.3);
         myCam.setBounds(0, 0, this.gameWidth * 5, this.gameHeight);
@@ -133,16 +131,20 @@ export class GameScene extends Phaser.Scene {
             .setScrollFactor(0.9)
             .setVisible(this.isItemVisible(TextureKeys.Tent));
         this.add.existing(this.tent);
-        this.tent.changeSizeOnHover(3, 3.08);
-        this.tent.onInteract((location) => {
-            console.log(location)
+        this.tent.highlightOnHover();
+        this.tent.onInteract((location, itemData) => {
+            this.scene.launch(SceneKeys.InteractionMenu, { location, itemData})
         })
-
-         const explorer = this.add.sprite(2500, this.gameHeight - 290, TextureKeys.Explorer)
-         .setOrigin(0)
-         .setScale(2.4)
-         .setScrollFactor(0.9)
-         explorer.anims.play('explorer_wind');
+        
+        const explorer = this.add.interactiveCharacter(2500, this.gameHeight - 260, CharacterKey.Explorer)
+            .setOrigin(0)
+            .setScale(2)
+            .setScrollFactor(0.9)
+        /* explorer.onTalkTo((location, characterData) => {
+            this.scene.launch(SceneKeys.Dialogue, { dialogueData: characterData, node: 0})
+        })           */
+        explorer.onTalkTo()
+        explorer.anims.play('explorer_wind');
         this.player = this.createPlayer();
         myCam.startFollow(this.player, true, 0.05, 0.05);
         
@@ -162,14 +164,6 @@ export class GameScene extends Phaser.Scene {
         //this.add.existing(this.fish);
 
         // Game Objects Events
-        this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
-            this.target.x = pointer.x;
-            this.target.y = pointer.y;
-            if (this.isInteractionMenuOpen && !this.fish.getBounds().contains(pointer.x, pointer.y) && !this.star.getBounds().contains(pointer.x, pointer.y)) {
-                this.scene.stop(SceneKeys.InteractionMenu);
-                this.isInteractionMenuOpen = false;
-            }
-        });
 
         const gameText1 = this.add.text(this.gameWidth * 2, 200, 'Challo?', {
             fontSize: '16px',

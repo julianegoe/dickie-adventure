@@ -16,7 +16,13 @@ enum TextureKeys {
     Ground = 'ground',
     Seal = 'seal',
     Tent = 'tent',
+    InteractionMenu = 'interaction_menu',
+    DialogueChoices = 'dialogue_choices',
+}
+
+enum CharacterKey {
     Explorer = 'explorer',
+
 }
 
 enum TilemapKeys {
@@ -48,5 +54,5 @@ enum AudioKeys {
 }
 
 export {
-    TextureKeys, SceneKeys, AnimationKeys, TilemapKeys, TilesetKeys, AudioKeys
+    TextureKeys, SceneKeys, AnimationKeys, TilemapKeys, TilesetKeys, AudioKeys, CharacterKey
 }

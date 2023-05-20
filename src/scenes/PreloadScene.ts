@@ -1,4 +1,4 @@
-import { AnimationKeys, AudioKeys, SceneKeys, TextureKeys } from "@/constants";
+import { AnimationKeys, AudioKeys, CharacterKey, SceneKeys, TextureKeys } from "@/constants";
 import WebFontFile from '@/helpers/WebFontFile'
 
 export class PreloadScene extends Phaser.Scene {
@@ -43,7 +43,7 @@ export class PreloadScene extends Phaser.Scene {
     private createExplorerAnimation() {
         this.anims.create({
             key: 'explorer_wind',
-            frames: this.anims.generateFrameNames(TextureKeys.Explorer, {
+            frames: this.anims.generateFrameNames(CharacterKey.Explorer, {
                 prefix: AnimationKeys.ExplorerWind,
                 end: 3,
                 zeroPad: 3,
@@ -61,6 +61,7 @@ export class PreloadScene extends Phaser.Scene {
         this.load.image(TextureKeys.Mountains, 'background/mountain_tile.png');
         this.load.image(TextureKeys.Foreground, 'background/foreground.png');
         this.load.image(TextureKeys.Ground, 'background/ground.png');
+        this.load.image(TextureKeys.InteractionMenu, 'interaction_menu.png');
         this.load.image(TextureKeys.Snow, 'snowflake.png');
         this.load.image(TextureKeys.Tent, 'tent.png');
         this.load.image(TextureKeys.Star, 'star.png');
@@ -68,17 +69,12 @@ export class PreloadScene extends Phaser.Scene {
         this.load.image(TextureKeys.LookAt, 'lookat.png');
         this.load.image(TextureKeys.Take, 'take.png');
         this.load.image(TextureKeys.Inventory, 'inventory.png');
-        this.load.atlas(TextureKeys.Explorer, "explorer.png", "explorer.json");
+        this.load.image(TextureKeys.DialogueChoices, 'dialogue_choices.png');
+
+        this.load.atlas(CharacterKey.Explorer, "explorer.png", "explorer.json");
         this.load.atlas(TextureKeys.DickieMove, "dickie_version_1/dickie_move.png", "dickie_version_1/dickie_move.json");
         this.load.atlas(TextureKeys.Seal, "dickie_version_2/dickie_move.png", "dickie_version_2/dickie_move.json");
 
-        [TextureKeys.Star, TextureKeys.Fish].forEach((key) => {
-            this.load.json({
-                key: key,
-                url: 'src/dialogues/item_texts.json',
-                dataKey: key,
-            });
-        });
         this.load.audio(AudioKeys.ArcticWinds, ['arctic_winds.ogg'])
     }
 

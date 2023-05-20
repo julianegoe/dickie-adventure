@@ -21,8 +21,8 @@ export default class InteractionMenu extends Phaser.Scene {
         this.location = data.location;
         this.itemData = data.itemData;
         this.displayText = this.add.text(50, 50, "", {
-            fontFamily: 'VT323',
-            fontSize: 32,
+            fontFamily: "'Press Start 2P'",
+            fontSize: "16px",
             color: '#000',
         }).setOrigin(0);
     }

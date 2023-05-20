@@ -10,6 +10,7 @@ export default class InteractionMenu extends Phaser.Scene {
     private menuRectangle!: Sprite;
     private lookAt!: Sprite;
     private take!: Sprite;
+    private displayText!: Phaser.GameObjects.Text
 
     constructor() {
         super({ key: SceneKeys.InteractionMenu });
@@ -19,17 +20,18 @@ export default class InteractionMenu extends Phaser.Scene {
     init(data: { location: { x: number, y: number }, itemData: ItemData }) {
         this.location = data.location;
         this.itemData = data.itemData;
+        this.displayText = this.add.text(50, 50, "", {
+            fontFamily: 'VT323',
+            fontSize: 32,
+            color: '#000',
+        }).setOrigin(0);
     }
 
     lookAtItem() {
         if (this.itemData.interactable) {
-            const text = this.add.text(50, 50, this.itemData.lookAtText, {
-                fontFamily: 'VT323',
-                fontSize: 32,
-                color: '#000',
-            }).setOrigin(0);
+            this.displayText.setText(this.itemData.lookAtText)
             setTimeout(() => {
-                text.setVisible(false)
+                this.displayText.setVisible(false)
             }, 3500)
         }
     }
@@ -38,13 +40,9 @@ export default class InteractionMenu extends Phaser.Scene {
         if (this.itemData.removeable) {
             this.inventoryStory.addItem(this.itemData.key)
         }
-        const text = this.add.text(50, 50, this.itemData.takeText, {
-            fontFamily: 'VT323',
-            fontSize: 32,
-            color: '#000',
-        }).setOrigin(0);
+        this.displayText.setText(this.itemData.takeText)
         setTimeout(() => {
-            text.setVisible(false)
+            this.displayText.setVisible(false)
         }, 3500)
     }
 

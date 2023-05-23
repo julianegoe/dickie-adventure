@@ -1,12 +1,14 @@
 import type { CharacterKey } from '@/constants';
 import { characters, type CharacterData } from '@/dialogues/characters';
 import DialogueManager from '@/helpers/DialogueManager';
+import { useGameStore } from '@/stores/gameStore';
 import Phaser, { Scene } from 'phaser'
 
 export default class InteractiveCharacter extends Phaser.GameObjects.Sprite {
 
     private characterData!: CharacterData;
     private dialogueManager: DialogueManager;
+
 
     constructor(scene: Scene, x: number, y: number, texture: string) {
         super(scene, x, y, texture)
@@ -17,20 +19,18 @@ export default class InteractiveCharacter extends Phaser.GameObjects.Sprite {
 
     public onTalkTo() {
         this.on('pointerdown', () => {
-            this.dialogueManager.startDialogue();
+            this.dialogueManager.startDialogue(0);
         })
     }
 
     public showNameOnHover(position: { x: number, y: number}) {
-        console.log(this.x, this.y)
         const text = this.scene.add.text(position.x + 100, position.y, this.characterData.name, {
             fontFamily: "'Press Start 2P'",
             color: "#000000",
             fontSize: "14px"
         }).setScrollFactor(0).setVisible(false);
-        this.on('pointerover', () => {
-            console.log(this.x, this.y)
-            text.setVisible(true)
+        this.on('pointerover', (pointer: {x: number, y: number}) => {
+            text.setVisible(true).setOrigin(0).setPosition(pointer.x, pointer.y)
         })
         this.on('pointerout', () => {
             text.setVisible(false)

@@ -3,7 +3,6 @@ import InteractiveItem from "../objects/InteractiveItem";
 import { useInventoryStore } from "@/stores/inventory";
 import { useGameStore } from "@/stores/gameStore";
 import Vector2 = Phaser.Math.Vector2;
-import InteractiveCharacter from "@/objects/InteractiveCharacter";
 
 export class GameScene extends Phaser.Scene {
 
@@ -18,6 +17,7 @@ export class GameScene extends Phaser.Scene {
     private gameWidth!: number;
     private gameHeight!: number;
     private inventoryStore!: any;
+    private gameStore!: any;
 
     constructor() {
         super({ key: 'GameScene' });
@@ -56,7 +56,7 @@ export class GameScene extends Phaser.Scene {
         seal.anims.play('npc_left');
         seal2.anims.play('npc_left');
         seal3.anims.play('npc_left');
-        
+
     }
 
     createBackground() {
@@ -92,9 +92,9 @@ export class GameScene extends Phaser.Scene {
         this.windSound = this.sound.add(AudioKeys.ArcticWinds)
     }
 
-    initInventoryStore() {
-        const gameStore = useGameStore();
-        gameStore.setGameScene(true);
+    initStores() {
+        this.gameStore = useGameStore();
+        this.gameStore.setGameScene(true);
         this.inventoryStore = useInventoryStore();
     }
 
@@ -102,7 +102,6 @@ export class GameScene extends Phaser.Scene {
         // Set Up Stuff
         this.gameWidth = this.scale.width;
         this.gameHeight = this.scale.height;
-        this.initInventoryStore();
         this.cursors = this.input.keyboard?.createCursorKeys();
         this.addSounds();
         this.windSound.play({
@@ -128,7 +127,7 @@ export class GameScene extends Phaser.Scene {
             .setScrollFactor(0.9)
             .setVisible(this.isItemVisible(TextureKeys.Tent));
         this.add.existing(this.tent);
-        
+
         this.explorer = this.add.interactiveCharacter(2500, this.gameHeight - 260, CharacterKey.Explorer)
             .setOrigin(0)
             .setScale(2)
@@ -151,19 +150,20 @@ export class GameScene extends Phaser.Scene {
             fontFamily: "'Press Start 2P'",
             color: "#000000",
         })
-        // Game Objects Events
 
+        // Game Objects Events
         this.tent.highlightOnHover();
         this.tent.onInteract((location, itemData) => {
-            this.scene.launch(SceneKeys.InteractionMenu, { location, itemData})
+            this.scene.launch(SceneKeys.InteractionMenu, { location, itemData })
         });
-
+        this.explorer.showNameOnHover({ x: this.explorer.x, y: this.explorer.y - 100 });
         this.explorer.onTalkTo();
-        this.explorer.showNameOnHover({ x: this.explorer.x, y: this.explorer.y - 100});
+
 
     }
 
     update(dt: number) {
+        console.log(this.gameStore.gameMode)
         if (this.cursors?.left.isDown) {
             this.velocityX -= 2.5;
 

@@ -1,13 +1,13 @@
 import type { CharacterKey } from "@/constants";
 
-export interface Choices {
+export interface Choice {
     text: string | string[];
     nextNode: number | null;
 }
 
 export interface IDialogue {
     text: string[] | string;
-    choices: Choices[]
+    choices: Choice[]
 }
 
 export interface CharacterData {
@@ -15,6 +15,7 @@ export interface CharacterData {
     name: string;
     altName: string;
     interactable: boolean;
+    startNode: number;
     dialogue: IDialogue[]
 }
 
@@ -29,6 +30,7 @@ const characters: Partial<InteractiveItemInterface> = {
         name: "Angel-Mensch",
         altName: "Forscher",
         interactable: true,
+        startNode: 0,
         dialogue: [
             {
                 text: [ "Tach auch."],

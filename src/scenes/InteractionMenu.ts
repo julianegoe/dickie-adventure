@@ -28,22 +28,18 @@ export default class InteractionMenu extends Phaser.Scene {
     }
 
     lookAtItem() {
+        this.displayText.setText("")
         if (this.itemData.interactable) {
             this.displayText.setText(this.itemData.lookAtText)
-            setTimeout(() => {
-                this.displayText.setVisible(false)
-            }, 3500)
         }
     }
 
     takeItem() {
+        this.displayText.setText("")
         if (this.itemData.removeable) {
             this.inventoryStory.addItem(this.itemData.key)
         }
         this.displayText.setText(this.itemData.takeText)
-        setTimeout(() => {
-            this.displayText.setVisible(false)
-        }, 3500)
     }
 
     create() {

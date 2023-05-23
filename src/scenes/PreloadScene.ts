@@ -56,7 +56,7 @@ export class PreloadScene extends Phaser.Scene {
     preload() {
         // this.load.image(TextureKeys.Ice, '/background/mountains.png')
         // this.load.tilemapTiledJSON(TilemapKeys.Mountains, '/background/mountains.json')
-        this.load.addFile(new WebFontFile(this.load, 'VT323'))
+        this.load.addFile(new WebFontFile(this.load, 'VT323'));
         this.load.image(TextureKeys.Bubble, 'bubble.png');
         this.load.image(TextureKeys.Mountains, 'background/mountain_tile.png');
         this.load.image(TextureKeys.Foreground, 'background/foreground.png');

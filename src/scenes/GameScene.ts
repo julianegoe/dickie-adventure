@@ -100,6 +100,7 @@ export class GameScene extends Phaser.Scene {
 
     create() {
         // Set Up Stuff
+        this.initStores();
         this.gameWidth = this.scale.width;
         this.gameHeight = this.scale.height;
         this.cursors = this.input.keyboard?.createCursorKeys();

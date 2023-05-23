@@ -3,7 +3,6 @@ import InteractiveItem from "../objects/InteractiveItem";
 import { useInventoryStore } from "@/stores/inventory";
 import { useGameStore } from "@/stores/gameStore";
 import Vector2 = Phaser.Math.Vector2;
-import { type CharacterData } from "@/dialogues/characters";
 import InteractiveCharacter from "@/objects/InteractiveCharacter";
 
 export class GameScene extends Phaser.Scene {
@@ -14,13 +13,11 @@ export class GameScene extends Phaser.Scene {
     private backgrounds: { ratioX: number, sprite: Phaser.GameObjects.TileSprite }[] = [];
     private player!: Phaser.GameObjects.Sprite;
     private tent!: InteractiveItem;
+    private explorer!: IInteractiveCharacter;
     private sealGroup!: Phaser.GameObjects.Group;
     private gameWidth!: number;
     private gameHeight!: number;
-    private target = { x: 0, y: 0 };
     private inventoryStore!: any;
-    private star!: InteractiveItem;
-    private fish!: InteractiveItem;
 
     constructor() {
         super({ key: 'GameScene' });
@@ -81,12 +78,6 @@ export class GameScene extends Phaser.Scene {
                 .setOrigin(0)
                 .setScrollFactor(0)
         });
-        // create the Tilemap
-        //const map = this.make.tilemap({ key: TilemapKeys.Mountains })
-        // add the tileset image we are using
-        //const tileset = map.addTilesetImage(TilesetKeys.Mountains, TextureKeys.Ice) as Phaser.Tilemaps.Tileset
-        // create the layers we want in the right order
-        //map.createLayer("mountains", tileset)?.setPosition(0, this.gameHeight / 2);
     }
 
     createInterActiveItem(texture: string, position: Vector2, scale: number) {
@@ -101,13 +92,17 @@ export class GameScene extends Phaser.Scene {
         this.windSound = this.sound.add(AudioKeys.ArcticWinds)
     }
 
-    create() {
-        this.lights.enable()
+    initInventoryStore() {
         const gameStore = useGameStore();
         gameStore.setGameScene(true);
         this.inventoryStore = useInventoryStore();
+    }
+
+    create() {
+        // Set Up Stuff
         this.gameWidth = this.scale.width;
         this.gameHeight = this.scale.height;
+        this.initInventoryStore();
         this.cursors = this.input.keyboard?.createCursorKeys();
         this.addSounds();
         this.windSound.play({
@@ -119,90 +114,56 @@ export class GameScene extends Phaser.Scene {
             loop: true,
             delay: 0,
         })
-        // Create Sprites
         const myCam = this.cameras.main;
         myCam.setBackgroundColor('#dce2ed').setZoom(1.3);
         myCam.setBounds(0, 0, this.gameWidth * 5, this.gameHeight);
 
+        // Create Sprites
         this.createBackground();
+        this.createNpc();
+
         this.tent = new InteractiveItem(this, 2870, this.gameHeight - 200, TextureKeys.Tent)
             .setOrigin(0.5)
             .setScale(3)
             .setScrollFactor(0.9)
             .setVisible(this.isItemVisible(TextureKeys.Tent));
         this.add.existing(this.tent);
-        this.tent.highlightOnHover();
-        this.tent.onInteract((location, itemData) => {
-            this.scene.launch(SceneKeys.InteractionMenu, { location, itemData})
-        })
         
-        const explorer = this.add.interactiveCharacter(2500, this.gameHeight - 260, CharacterKey.Explorer)
+        this.explorer = this.add.interactiveCharacter(2500, this.gameHeight - 260, CharacterKey.Explorer)
             .setOrigin(0)
             .setScale(2)
             .setScrollFactor(0.9)
-        /* explorer.onTalkTo((location, characterData) => {
-            this.scene.launch(SceneKeys.Dialogue, { dialogueData: characterData, node: 0})
-        })           */
-        explorer.onTalkTo()
-        explorer.anims.play('explorer_wind');
+        this.explorer.anims.play('explorer_wind');
+
         this.player = this.createPlayer();
         myCam.startFollow(this.player, true, 0.05, 0.05);
-        
-        this.target = new Phaser.Math.Vector2();
-         this.scene.launch(SceneKeys.Snowfall, {
-             player: this.player,
-         });
+        this.scene.launch(SceneKeys.Snowfall, {
+            player: this.player,
+        });
 
-         this.createNpc();
-        
-    
-        //this.hitArea = new Phaser.Geom.Rectangle(0, this.gameHeight / 1.7, this.gameWidth, 240)
-
-        //this.star = this.createInterActiveItem(TextureKeys.Star, new Phaser.Math.Vector2(200, 300), 3);
-        //this.fish = this.createInterActiveItem(TextureKeys.Fish, new Phaser.Math.Vector2(300, 300), 2);
-        //this.add.existing(this.star);
-        //this.add.existing(this.fish);
-
+        this.add.text(this.gameWidth * 1.5, 200, 'Challo?', {
+            fontSize: '16px',
+            fontFamily: "'Press Start 2P'",
+            color: "#000000",
+        })
+        this.add.text(this.gameWidth * 2, 200, 'Wo sind alle?', {
+            fontSize: '16px',
+            fontFamily: "'Press Start 2P'",
+            color: "#000000",
+        })
         // Game Objects Events
 
-        const gameText1 = this.add.text(this.gameWidth * 1.5, 200, 'Challo?', {
-            fontSize: '16px',
-            fontFamily: "'Press Start 2P'",
-            color: "#000000",
-        })
-        const gameText2 = this.add.text(this.gameWidth * 2, 200, 'Wo sind alle?', {
-            fontSize: '16px',
-            fontFamily: "'Press Start 2P'",
-            color: "#000000",
-        })
-        /* this.star.onInteract((location) => {
-            this.scene.launch(SceneKeys.InteractionMenu, {
-                location: {
-                    x: location.x,
-                    y: location.y - 100
-                },
-                texture: TextureKeys.Star,
-            })
-            this.isInteractionMenuOpen = true;
+        this.tent.highlightOnHover();
+        this.tent.onInteract((location, itemData) => {
+            this.scene.launch(SceneKeys.InteractionMenu, { location, itemData})
         });
-        this.fish.onInteract((location) => {
-            this.scene.launch(SceneKeys.InteractionMenu, {
-                location: {
-                    x: location.x,
-                    y: location.y - 100
-                },
-                texture: TextureKeys.Fish,
-            })
-            this.isInteractionMenuOpen = true;
-        });
-        this.star.changeSizeOnHover(3, 3.5);
-        this.fish.changeSizeOnHover(2, 2.5); */
+
+        this.explorer.onTalkTo();
+        this.explorer.showNameOnHover({ x: this.explorer.x, y: this.explorer.y - 100});
+
     }
 
     update(dt: number) {
-        this.tent.setVisible(true);
-        /* this.star.setVisible(this.isItemVisible(TextureKeys.Star));
-        this.fish.setVisible(this.isItemVisible(TextureKeys.Fish)); */
         if (this.cursors?.left.isDown) {
             this.velocityX -= 2.5;
 
@@ -226,21 +187,5 @@ export class GameScene extends Phaser.Scene {
             const sealCopy = seal as Phaser.GameObjects.Sprite
             sealCopy.x -= 0.8
         })
-        /* if (this.hitArea.contains(this.target.x, this.target.y)) {
-            if (this.player && this.player?.body.speed > 0) {
-                if (distance < tolerance) {
-                    this.player?.body.reset(this.target.x, this.target.y);
-                    this.player.anims.stop();
-                }
-                if (this.target.x < this.player?.x) {
-                    this.player?.anims.play('left', true);
-                } else if (this.target.x > this.player?.x) {
-                    this.player?.anims.play('right', true);
-                }
-            }
-        } else {
-            this.player?.body.setVelocity(0, 0);
-            this.player.anims.stop();
-        } */
     }
 }

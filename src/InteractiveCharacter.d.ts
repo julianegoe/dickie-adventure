@@ -1,7 +1,7 @@
 declare interface IInteractiveCharacter extends Phaser.GameObjects.Sprite
 {
-    //onTalkTo(callback: (location: { x: number, y: number }, characterData: CharacterData) => void): void;
     onTalkTo(): void
+    showNameOnHover({ x: number, y: number}): void
 }
 
 declare namespace Phaser.GameObjects

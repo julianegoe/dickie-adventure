@@ -8,25 +8,19 @@ class DialogueManager {
   private textDisplay!: Phaser.GameObjects.Text;
   private choicesGroup!: Phaser.GameObjects.Group;
 
-  constructor(scene: Scene) {
+  constructor(scene: Scene, dialogueData: IDialogue[]) {
     this.scene = scene;
-  }
-
-  startDialogue(dialogueDat: IDialogue[]) {
-    this.dialogueData = dialogueDat
+    this.dialogueData = dialogueData;
     this.currentNode = this.dialogueData[0];
-    // Set up your text display or other visual elements
     this.textDisplay = this.scene.add.text(this.scene.scale.width * 0.16, 100, "", {
       fontSize: '12px',
       fontFamily: "'Press Start 2P'",
       color: "#000000",
       backgroundColor: "#fff"
     }).setOrigin(0).setScrollFactor(0);
-    // Display the first dialogue
-    this.displayDialogue();
   }
 
-  displayDialogue() {
+  startDialogue() {
     if (this.currentNode) {
       this.textDisplay.setText(this.currentNode.text);
       // Display choices if available
@@ -35,7 +29,7 @@ class DialogueManager {
       } else {
         setTimeout(() => {
           this.endDialogue();
-        }, 3000)
+        }, 2000)
       }
     } else {
       this.endDialogue();
@@ -59,7 +53,6 @@ class DialogueManager {
       choice.on('pointerdown', () => {
         // Update currentNode based on the chosen option
         if (choice.data.list.nextNode >= 0) {
-          console.log('hier?')
           this.currentNode = this.dialogueData[choice.data.list.nextNode];
         } else {
           this.endDialogue();
@@ -67,7 +60,7 @@ class DialogueManager {
         }
         this.choicesGroup.destroy(true);
         // Continue the dialogue
-        this.displayDialogue();
+        this.startDialogue();
       })
     })
 
@@ -76,14 +69,8 @@ class DialogueManager {
 
 
   endDialogue() {
-    // Clean up any visual elements or event listeners
     this.textDisplay.destroy(true);
     this.choicesGroup.destroy(true);
-    // Additional cleanup for choices display if needed
-    // ...
-
-    // Dialogue ended, perform any necessary actions
-    // Example: Resume normal gameplay, trigger an event, etc.
   }
 
 }

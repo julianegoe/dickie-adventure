@@ -1,11 +1,10 @@
-import Phaser from 'phaser'
+import Phaser from "phaser"
 import {PreloadScene} from "@/scenes/PreloadScene";
 import {GameScene} from "@/scenes/GameScene";
-import {Inventory} from "@/scenes/Inventory";
 import InteractionMenu from "@/scenes/InteractionMenu";
 import Dialogue from "@/scenes/Dialogue";
 import {BootScene} from "@/scenes/BootScene";
-import { SnowScene } from './scenes/SnowScene';
+import { SnowScene } from "./scenes/SnowScene";
 
 function launch(containerId: string) {
     return new Phaser.Game({

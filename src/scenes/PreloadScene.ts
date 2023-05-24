@@ -57,14 +57,16 @@ export class PreloadScene extends Phaser.Scene {
         // this.load.image(TextureKeys.Ice, '/background/mountains.png')
         // this.load.tilemapTiledJSON(TilemapKeys.Mountains, '/background/mountains.json')
         this.load.addFile(new WebFontFile(this.load, 'VT323'));
-        this.load.image(TextureKeys.Bubble, 'bubble.png');
-        this.load.image(TextureKeys.Mountains, 'background/mountain_tile.png');
-        this.load.image(TextureKeys.Foreground, 'background/foreground.png');
-        this.load.image(TextureKeys.Ground, 'background/ground.png');
+        this.load.image(TextureKeys.Mountains, 'iceworld/mountains.png');
+        this.load.image(TextureKeys.Foreground, 'iceworld/foreground.png');
+        this.load.image(TextureKeys.Ground, 'iceworld/ground.png');
+        this.load.image(TextureKeys.Fog, 'iceworld/fog.png');
+        this.load.image(TextureKeys.Water, 'iceworld/water.png');
+        this.load.image(TextureKeys.Sky, 'iceworld/sky.png');
+        this.load.image(TextureKeys.Middleground, 'iceworld/middleground.png');
         this.load.image(TextureKeys.InteractionMenu, 'interaction_menu.png');
         this.load.image(TextureKeys.Snow, 'snowflake.png');
         this.load.image(TextureKeys.Tent, 'tent.png');
-        this.load.image(TextureKeys.Star, 'star.png');
         this.load.image(TextureKeys.Fish, 'fish.png');
         this.load.image(TextureKeys.LookAt, 'lookat.png');
         this.load.image(TextureKeys.Take, 'take.png');

@@ -15,7 +15,6 @@ export interface CharacterData {
     name: string;
     altName: string;
     interactable: boolean;
-    startNode: number;
     dialogue: IDialogue[]
 }
 
@@ -30,7 +29,6 @@ const characters: Partial<InteractiveItemInterface> = {
         name: "Angel-Mensch",
         altName: "Forscher",
         interactable: true,
-        startNode: 0,
         dialogue: [
             {
                 text: [ "Tach auch."],

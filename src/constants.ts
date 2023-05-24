@@ -18,6 +18,10 @@ enum TextureKeys {
     Tent = 'tent',
     InteractionMenu = 'interaction_menu',
     DialogueChoices = 'dialogue_choices',
+    Fog = 'fog',
+    Water = 'water',
+    Sky = 'sky',
+    Middleground = 'middleground'
 }
 
 enum CharacterKey {

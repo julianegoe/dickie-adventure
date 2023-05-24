@@ -3,6 +3,7 @@ import InteractiveItem from "../objects/InteractiveItem";
 import { useInventoryStore } from "@/stores/inventory";
 import { useGameStore } from "@/stores/gameStore";
 import Vector2 = Phaser.Math.Vector2;
+import InteractiveCharacter from "@/objects/InteractiveCharacter";
 
 export class GameScene extends Phaser.Scene {
 
@@ -18,13 +19,14 @@ export class GameScene extends Phaser.Scene {
     private gameHeight!: number;
     private inventoryStore!: any;
     private gameStore!: any;
+    private fog!: Phaser.GameObjects.TileSprite;
 
     constructor() {
         super({ key: 'GameScene' });
     }
 
     createPlayer() {
-        return this.add.sprite(100, this.gameHeight - 100, TextureKeys.DickieMove)
+        return this.add.sprite(100, this.gameHeight - 120, TextureKeys.DickieMove)
             .setOrigin(0)
             .setScale(2)
     }
@@ -61,23 +63,46 @@ export class GameScene extends Phaser.Scene {
 
     createBackground() {
         this.backgrounds.push({
-            ratioX: 0.2,
-            sprite: this.add.tileSprite(0, this.gameHeight - 264, this.gameWidth, 64, TextureKeys.Mountains)
+            ratioX: 0.1,
+            sprite: this.add.tileSprite(0, 0, this.gameWidth, this.gameHeight, TextureKeys.Sky)
                 .setOrigin(0)
-                .setScrollFactor(0),
+                .setScrollFactor(0)
+                .setScale(2,2)
         });
         this.backgrounds.push({
             ratioX: 0.3,
-            sprite: this.add.tileSprite(0, this.gameHeight - 200, this.gameWidth, this.gameHeight / 2, TextureKeys.Ground)
+            sprite: this.add.tileSprite(0, 0, this.gameWidth,  this.gameHeight, TextureKeys.Mountains)
                 .setOrigin(0)
                 .setScrollFactor(0)
+                .setScale(2,2)
+        });
+        this.backgrounds.push({
+            ratioX: 0.4,
+            sprite: this.add.tileSprite(0, 0, this.gameWidth, this.gameHeight, TextureKeys.Ground)
+                .setOrigin(0)
+                .setScrollFactor(0)
+                .setScale(2,2)
         })
         this.backgrounds.push({
-            ratioX: 0.9,
-            sprite: this.add.tileSprite(0, this.gameHeight - 136, this.gameWidth, 128, TextureKeys.Foreground)
+            ratioX: 0.35,
+            sprite: this.add.tileSprite(0, 0, this.gameWidth, this.gameHeight, TextureKeys.Middleground)
                 .setOrigin(0)
                 .setScrollFactor(0)
+                .setScale(2,2)
         });
+        this.fog = this.add.tileSprite(0, 0, this.gameWidth, this.gameHeight, TextureKeys.Fog)
+        .setOrigin(0)
+        .setScrollFactor(0)
+        .setAlpha(0.3)
+        .setScale(2,2);
+
+        this.backgrounds.push({
+            ratioX: 0.7,
+            sprite: this.add.tileSprite(0, 0, this.gameWidth, this.gameHeight, TextureKeys.Water)
+                .setOrigin(0)
+                .setScrollFactor(0)
+                .setScale(2,2)
+        })
     }
 
     createInterActiveItem(texture: string, position: Vector2, scale: number) {
@@ -115,21 +140,21 @@ export class GameScene extends Phaser.Scene {
             delay: 0,
         })
         const myCam = this.cameras.main;
-        myCam.setBackgroundColor('#dce2ed').setZoom(1.3);
+        myCam.setBackgroundColor('#dce2ed')
         myCam.setBounds(0, 0, this.gameWidth * 5, this.gameHeight);
 
         // Create Sprites
         this.createBackground();
         this.createNpc();
 
-        this.tent = new InteractiveItem(this, 2870, this.gameHeight - 200, TextureKeys.Tent)
+        this.tent = new InteractiveItem(this, 2870, this.gameHeight - 210, TextureKeys.Tent)
             .setOrigin(0.5)
             .setScale(3)
             .setScrollFactor(0.9)
             .setVisible(this.isItemVisible(TextureKeys.Tent));
         this.add.existing(this.tent);
 
-        this.explorer = this.add.interactiveCharacter(2500, this.gameHeight - 260, CharacterKey.Explorer)
+        this.explorer = this.add.interactiveCharacter(2500, this.gameHeight - 290, CharacterKey.Explorer)
             .setOrigin(0)
             .setScale(2)
             .setScrollFactor(0.9)
@@ -183,6 +208,7 @@ export class GameScene extends Phaser.Scene {
         this.backgrounds.forEach((bg) => {
             bg.sprite.tilePositionX = this.cameras.main.scrollX * bg.ratioX
         })
+        this.fog.tilePositionX += 1.8
 
         this.sealGroup.children.entries.forEach((seal) => {
             const sealCopy = seal as Phaser.GameObjects.Sprite

@@ -1,9 +1,8 @@
-import { FrameKeys, SceneKeys, TextureKeys } from "@/constants";
+import { SceneKeys, TextureKeys } from "@/constants";
 import Rectangle = Phaser.GameObjects.Rectangle;
 import Sprite = Phaser.GameObjects.Sprite;
-import { useInventoryStore, type InventoryItem } from "@/stores/inventory";
+import { useInventoryStore } from "@/stores/inventory";
 import type { ItemData } from "@/dialogues/itemObjects";
-import type { IInteractiveItem } from "@/interactiveItem";
 
 export default class InteractionMenu extends Phaser.Scene {
     private location!: { x: number, y: number };

@@ -1,5 +1,5 @@
+import { TextureKeys } from "@/constants";
 import type { Choice, IDialogue } from "@/dialogues/characters";
-import { GameMode, useGameStore } from "@/stores/gameStore";
 import type { Scene } from "phaser";
 
 class DialogueManager {
@@ -19,7 +19,21 @@ class DialogueManager {
       fontFamily: "'Press Start 2P'",
       color: "#000000",
       backgroundColor: "#fff",
+      wordWrap: { width: 500, useAdvancedWrap: true },
     }).setOrigin(0).setScrollFactor(0);
+  }
+
+  typewriteText(text: string | string[]) {
+    const length = text.length
+    let i = 0
+    this.scene.time.addEvent({
+      callback: () => {
+        this.dialogueText.text += text[i]
+        ++i
+      },
+      repeat: length - 1,
+      delay: 50
+    })
   }
 
   startDialogue(dialogueId: number) {
@@ -34,29 +48,32 @@ class DialogueManager {
     if (this.currentNode) {
       this.clearDialogue();
       // Display the dialogue text
-      this.dialogueText.setText(this.currentNode.text)
+      this.typewriteText(this.currentNode.text)
+      //this.dialogueText.setText(this.currentNode.text)
       // Display choices if available
       if (this.currentNode.choices && this.currentNode.choices.length > 0) {
         this.choices = this.currentNode.choices.map((choice, index) => {
           const choiceText = this.scene.add.text(
-            this.scene.scale.width * 0.16,
-            this.scene.scale.height * 0.64 + index * 30,
+            this.scene.scale.width * 0.04,
+            this.scene.scale.height * 0.8 + index * 30,
             choice.text,
             {
               fontSize: '14px',
               fontFamily: "'Press Start 2P'",
               color: "#000000",
               backgroundColor: "#fff",
+              wordWrap: { width: 600, useAdvancedWrap: true },
             }
           ).setOrigin(0).setScrollFactor(0);
 
           // Add pointer event to the choice text
-          choiceText.setInteractive().on('pointerdown', () => {
+          choiceText.setInteractive({ cursor: 'pointer' }).on('pointerdown', () => {
             this.handleChoiceSelection(choice);
           });
-
           return choiceText;
         });
+      } else {
+        setTimeout(() => this.endDialogue(), 2500)
       }
     }
   }

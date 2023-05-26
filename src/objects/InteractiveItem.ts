@@ -52,14 +52,11 @@ export default class InteractiveItem extends Phaser.GameObjects.Sprite {
             console.debug('not interactable')
         }
     }
-
-    // ... other methods and actions
 }
 Phaser.GameObjects.GameObjectFactory.register(
     'interactiveItem',
     function (this: Phaser.GameObjects.GameObjectFactory, x: number, y: number, texture: string) {
-        const interactiveItem: InteractiveItem = new InteractiveItem(this.scene, x, y, texture)
-
+        const interactiveItem = new InteractiveItem(this.scene, x, y, texture)
         this.displayList.add(interactiveItem)
         this.updateList.add(interactiveItem)
 

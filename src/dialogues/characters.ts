@@ -1,7 +1,7 @@
 import type { CharacterKey } from "@/constants";
 
 export interface Choice {
-    text: string | string[];
+    text: string;
     nextNode: number | null;
 }
 
@@ -18,12 +18,12 @@ export interface CharacterData {
     dialogue: IDialogue[]
 }
 
-export type InteractiveItemInterface = {
+export type InteractiveCharacterInterface = {
     [value in CharacterKey]: CharacterData;
 };
 
 
-const characters: Partial<InteractiveItemInterface> = {
+const characters: Partial<InteractiveCharacterInterface> = {
     explorer: {
         id: 1,
         name: "Angel-Mensch",
@@ -31,7 +31,7 @@ const characters: Partial<InteractiveItemInterface> = {
         interactable: true,
         dialogue: [
             {
-                text: [ "Tach auch."],
+                text: "Tach auch.",
                 choices: [
                     { text: "Challo, was bist du?", nextNode: 1 },
                     { text: "Weißt du, wo meine Familie ist?", nextNode: 2 },
@@ -39,33 +39,33 @@ const characters: Partial<InteractiveItemInterface> = {
                 ]
             },
             {
-                text: [ "Ich bin Polarforscher", "und besorge mir gerade mein Abendessen"],
+                text: "Ich bin Polarforscher und besorge mir gerade mein Abendessen",
                 choices: [
                     { text: "Darf ich was abhaben?", nextNode: 3 }
                 ]
             },
             {
-                text:[ "Du bist der erste Seehund, ", "der mir in letzter Zeit begegnet ist"],
+                text:"Du bist der erste Seehund, der mir in letzter Zeit begegnet ist",
                 choices: [
                     { text: "Doof.", nextNode: 4 },
                     { text: "Du auch der erste Polarforscher", nextNode: 5 },
                 ]
             },
             {
-                text: [ "Nein."],
+                text: "Nein.",
                 choices: [
                     { text: "Bütteeeee", nextNode: 3 },
                     { text: "Ok, dann nicht.", nextNode: null }
                 ]
             },
             {
-                text: [ "Hmm."],
+                text: "Hmm.",
                 choices: []
             },
             {
-                text: [ "Und nu?"],
+                text: "Und nu?",
                 choices: [
-                    { text: ["Hilfst du mir bei der Suche", "nach meiner Familie?"], nextNode: 3 },
+                    { text: "Hilfst du mir bei der Suche nach meiner Familie?", nextNode: 3 },
                 ]
             },
         ],

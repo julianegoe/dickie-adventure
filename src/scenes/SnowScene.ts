@@ -32,9 +32,9 @@ export class SnowScene extends Phaser.Scene {
             // lifespan
             lifespan: { min: 8000, max: 10000 },
             scale: { random: [0.25, 1.8] },
-            alpha: { random: [0.05, 0.8] },
+            alpha: { random: [0.05, 0.6] },
             gravityY: 10,
-            quantity: 45,
+            quantity: 40,
             blendMode: 'ADD',
             // follow the player at an offiset
             follow: this.player,

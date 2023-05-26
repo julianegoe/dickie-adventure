@@ -1,32 +1,26 @@
-import { SceneKeys, TextureKeys } from "@/constants";
-import type { CharacterData, IDialogue } from "@/dialogues/characters";
-import type { ItemData } from "@/dialogues/itemObjects";
+import { SceneKeys } from "@/constants";
+import type { CharacterData } from "@/dialogues/characters";
+import DialogueManager from "@/helpers/DialogueManager";
 
 export default class Dialogue extends Phaser.Scene {
+    private dialogueManager!: DialogueManager;
+    private characterData!: CharacterData;
+    private startNode: number = 0;
+
+
+
     constructor() {
-        super({key: 'Dialogue'});
+        super({key: SceneKeys.Dialogue});
     }
 
-    private dialogue: IDialogue[] = [];
-    private node: number = 0;
-    private gameWidth!: number;
-    private gameHeight!: number;
-
-    init(data: { dialogueData: CharacterData, node?: number }) {
-        this.dialogue = data.dialogueData?.dialogue
+    init(data: { dialogueData: CharacterData, startNode: number }) {
+        this.characterData = data.dialogueData;
+        this.startNode = data.startNode;
+        this.dialogueManager = new DialogueManager(this, this.characterData.dialogue);
     }
 
     create() {
-        this.gameWidth = this.scale.width;
-        this.gameHeight = this.scale.height;
-        const npcText = this.add.text(50, 50, this.dialogue[this.node].text, {
-            fontFamily: 'VT323',
-            fontSize: 32,
-            color: '#000',
-        }).setOrigin(0);
-
-        setTimeout(() => {
-            this.scene.stop(SceneKeys.Dialogue)
-        }, 3500)
+        console.log("Dialoge scene started")
+        this.dialogueManager.startDialogue(this.startNode);
     }
 }

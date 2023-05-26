@@ -21,7 +21,8 @@ enum TextureKeys {
     Fog = 'fog',
     Water = 'water',
     Sky = 'sky',
-    Middleground = 'middleground'
+    Middleground = 'middleground',
+    UiBox = 'ui_box',
 }
 
 enum CharacterKey {

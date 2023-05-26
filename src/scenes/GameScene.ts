@@ -3,7 +3,6 @@ import InteractiveItem from "../objects/InteractiveItem";
 import { useInventoryStore } from "@/stores/inventory";
 import { useGameStore } from "@/stores/gameStore";
 import Vector2 = Phaser.Math.Vector2;
-import InteractiveCharacter from "@/objects/InteractiveCharacter";
 
 export class GameScene extends Phaser.Scene {
 
@@ -20,6 +19,7 @@ export class GameScene extends Phaser.Scene {
     private inventoryStore!: any;
     private gameStore!: any;
     private fog!: Phaser.GameObjects.TileSprite;
+    private water!: Phaser.GameObjects.TileSprite;
 
     constructor() {
         super({ key: 'GameScene' });
@@ -96,13 +96,10 @@ export class GameScene extends Phaser.Scene {
         .setAlpha(0.3)
         .setScale(2,2);
 
-        this.backgrounds.push({
-            ratioX: 0.7,
-            sprite: this.add.tileSprite(0, 0, this.gameWidth, this.gameHeight, TextureKeys.Water)
-                .setOrigin(0)
-                .setScrollFactor(0)
-                .setScale(2,2)
-        })
+        this.water = this.add.tileSprite(0, 0, this.gameWidth, this.gameHeight, TextureKeys.Water)
+            .setOrigin(0)
+            .setScrollFactor(0)
+            .setScale(2,2)
     }
 
     createInterActiveItem(texture: string, position: Vector2, scale: number) {
@@ -189,7 +186,6 @@ export class GameScene extends Phaser.Scene {
     }
 
     update(dt: number) {
-        console.log(this.gameStore.gameMode)
         if (this.cursors?.left.isDown) {
             this.velocityX -= 2.5;
 
@@ -209,6 +205,7 @@ export class GameScene extends Phaser.Scene {
             bg.sprite.tilePositionX = this.cameras.main.scrollX * bg.ratioX
         })
         this.fog.tilePositionX += 1.8
+        this.water.tilePositionX += 1.8
 
         this.sealGroup.children.entries.forEach((seal) => {
             const sealCopy = seal as Phaser.GameObjects.Sprite

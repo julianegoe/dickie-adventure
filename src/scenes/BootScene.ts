@@ -1,7 +1,12 @@
+import { TextureKeys } from '@/constants.js';
+import '../objects/InteractiveCharacter';
+import '../objects/InteractiveItem';
 export class BootScene extends Phaser.Scene {
     constructor() {
         super({ key: 'BootScene' });
     }
+
+    private key!: Phaser.Input.Keyboard.Key | undefined;
 
     preload() {
         // preload assets

@@ -32,7 +32,7 @@ export default class InteractiveItem extends Phaser.GameObjects.Sprite {
         }).setScrollFactor(this.scrollFactorX).setVisible(false)
         let fx!: Phaser.FX.Shine
         this.on('pointerover', () => {
-            fx = this.postFX.addShine(1, .2, 5);
+            fx = this.postFX.addShine(0.8, .2, 5);
             text.setVisible(true)
         });
         this.on('pointerout', () => {

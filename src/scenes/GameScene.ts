@@ -1,4 +1,4 @@
-import { AnimationKeys, AudioKeys, CharacterKey, SceneKeys, TextureKeys } from "@/constants";
+import { AnimationKeys, AudioKeys, CharacterKey, FrameKeys, SceneKeys, TextureKeys } from "@/constants";
 import InteractiveItem from "../objects/InteractiveItem";
 import { useInventoryStore } from "@/stores/inventory";
 import { useGameStore } from "@/stores/gameStore";
@@ -13,6 +13,7 @@ export class GameScene extends Phaser.Scene {
     private player!: Phaser.GameObjects.Sprite;
     private tent!: InteractiveItem;
     private logs!: InteractiveItem;
+    private fish!: InteractiveItem;
     private explorer!: IInteractiveCharacter;
     private sealGroup!: Phaser.GameObjects.Group;
     private gameWidth!: number;
@@ -27,7 +28,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     createPlayer() {
-        return this.add.sprite(100, this.gameHeight - 120, TextureKeys.DickieMove)
+        return this.add.sprite(100, this.gameHeight - 220, TextureKeys.DickieMove)
             .setOrigin(0)
             .setScale(2)
     }
@@ -44,13 +45,13 @@ export class GameScene extends Phaser.Scene {
             frameRate: 7,
         });
         this.sealGroup = this.add.group();
-        const seal = this.add.sprite(200, this.gameHeight - 140, TextureKeys.Seal)
+        const seal = this.add.sprite(200, this.gameHeight - 240, TextureKeys.Seal)
             .setOrigin(0)
             .setScale(0.5);
-        const seal2 = this.add.sprite(230, this.gameHeight - 145, TextureKeys.Seal)
+        const seal2 = this.add.sprite(230, this.gameHeight - 245, TextureKeys.Seal)
             .setOrigin(0)
             .setScale(0.5);
-        const seal3 = this.add.sprite(257, this.gameHeight - 137, TextureKeys.Seal)
+        const seal3 = this.add.sprite(257, this.gameHeight - 237, TextureKeys.Seal)
             .setOrigin(0)
             .setScale(0.5);
         this.sealGroup.addMultiple([
@@ -127,6 +128,7 @@ export class GameScene extends Phaser.Scene {
         this.gameWidth = this.scale.width;
         this.gameHeight = this.scale.height;
         this.cursors = this.input.keyboard?.createCursorKeys();
+        this.scene.launch(SceneKeys.Inventory);
         this.addSounds();
         this.windSound.play({
             mute: false,
@@ -145,19 +147,26 @@ export class GameScene extends Phaser.Scene {
         this.createBackground();
         this.createNpc();
 
-        this.tent = new InteractiveItem(this, 2870, this.gameHeight - 210, TextureKeys.Tent)
+        this.tent = new InteractiveItem(this, 2870, this.gameHeight - 310, TextureKeys.Tent)
             .setOrigin(0.5)
             .setScale(3)
             .setScrollFactor(0.9)
         this.add.existing(this.tent);
 
-        this.logs = new InteractiveItem(this, 2970, this.gameHeight - 150, TextureKeys.Logs, "log_quantity_03")
+        this.logs = new InteractiveItem(this, 0, this.gameHeight - 250, TextureKeys.Logs, FrameKeys.LogQuant3)
             .setOrigin(0)
             .setScale(1.8)
             .setScrollFactor(0.9)
         this.add.existing(this.logs);
+        // 2970
 
-        this.explorer = this.add.interactiveCharacter(2500, this.gameHeight - 290, CharacterKey.Explorer)
+        this.fish = new InteractiveItem(this, 100, this.gameHeight - 250, TextureKeys.Fish)
+            .setOrigin(0)
+            .setScale(1.8)
+            .setScrollFactor(0.9)
+        this.add.existing(this.fish);
+
+        this.explorer = this.add.interactiveCharacter(2500, this.gameHeight - 390, CharacterKey.Explorer)
             .setOrigin(0)
             .setScale(2)
             .setScrollFactor(0.9)
@@ -189,6 +198,12 @@ export class GameScene extends Phaser.Scene {
         this.logs.onInteract((location, itemData) => {
             this.scene.launch(SceneKeys.InteractionMenu, { location, itemData, item: this.logs })
         });
+
+        this.fish.shineOnHover();
+        this.fish.onInteract((location, itemData) => {
+            this.scene.launch(SceneKeys.InteractionMenu, { location, itemData, item: this.fish })
+        });
+
         this.explorer.showNameOnHover({ x: this.explorer.x, y: this.explorer.y - 100 });
         this.explorer.onTalkTo();
 

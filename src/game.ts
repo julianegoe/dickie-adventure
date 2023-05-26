@@ -5,12 +5,13 @@ import InteractionMenu from "@/scenes/InteractionMenu";
 import Dialogue from "@/scenes/Dialogue";
 import {BootScene} from "@/scenes/BootScene";
 import { SnowScene } from "./scenes/SnowScene";
+import { Inventory } from "./scenes/Inventory";
 
 function launch(containerId: string) {
     return new Phaser.Game({
         type: Phaser.AUTO,
-        width: 800, // 30 * 32
-        height: 480, // 15 * 32
+        width: 900, // 30 * 32
+        height: 580, // 15 * 32
         pixelArt: true,
         parent: containerId,
         physics: {
@@ -20,7 +21,7 @@ function launch(containerId: string) {
                 debug: false
             }
         },
-        scene: [BootScene, PreloadScene, GameScene, InteractionMenu, Dialogue, SnowScene]
+        scene: [BootScene, PreloadScene, GameScene, InteractionMenu, Dialogue, SnowScene, Inventory]
     })
 }
 

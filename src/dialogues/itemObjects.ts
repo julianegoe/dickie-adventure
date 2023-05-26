@@ -11,7 +11,8 @@ export interface ItemData {
     interactable: boolean;
     lookAtText: string;
     takeText: string;
-    takenState: Array<FrameKeys | null>;
+    frames: Array<FrameKeys>;
+    initialFrame: FrameKeys | string;
     interactionCondition: (item: TextureKeys) => void
 }
 
@@ -30,7 +31,8 @@ const items: Partial<InteractiveItemInterface> =
             interactable: true,
             lookAtText: "Ich habe sowas Monströses noch nie gesehen.",
             takeText: DEFAULT_TAKE_TEXT,
-            takenState: [null],
+            frames: [],
+            initialFrame: TextureKeys.Tent,
             interactionCondition: function (interactWith: string) {
                 if (this.interactable) {
                     // test
@@ -47,7 +49,26 @@ const items: Partial<InteractiveItemInterface> =
             interactable: true,
             lookAtText: "Damit könnte man Feuer machen",
             takeText: "Eins kann ich mir ja mal nehmen.",
-            takenState: [FrameKeys.LogQuant2, FrameKeys.LogQuant1],
+            initialFrame: FrameKeys.LogQuant3,
+            frames: [FrameKeys.LogQuant3, FrameKeys.LogQuant2, FrameKeys.LogQuant1],
+            interactionCondition: function (interactWith: string) {
+                if (this.interactable) {
+                    // test
+                    console.log(`interact ${this.name} with ${interactWith}`)
+                }
+            },
+        },
+        fish: {
+            id: 2,
+            name: "Cholz",
+            altName: "Holzscheite",
+            key: TextureKeys.Fish,
+            removeable: true,
+            interactable: true,
+            lookAtText: "Damit könnte man Feuer machen",
+            takeText: "Eins kann ich mir ja mal nehmen.",
+            frames: [],
+            initialFrame: TextureKeys.Fish,
             interactionCondition: function (interactWith: string) {
                 if (this.interactable) {
                     // test

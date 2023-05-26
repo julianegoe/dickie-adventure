@@ -2,34 +2,28 @@ import {ref} from 'vue'
 import {defineStore} from 'pinia'
 import { TextureKeys } from '@/constants';
 
+export interface InventoryItem {
+    key: string;
+    isInGame: boolean;
+    isInInventory: boolean;
+}
+
 export const useInventoryStore = defineStore('inventory', () => {
-    const items = ref<Array<{
-        name: string;
-        isInGame: boolean;
-        isInInventory: boolean;
-    }>>([
+    const items = ref<InventoryItem[]>([
         {
-            name: "star",
+            key: TextureKeys.Logs,
             isInGame: true,
             isInInventory: false,
         },
         {
-            name: TextureKeys.Tent,
-            isInGame: true,
-            isInInventory: false,
-        },
-        {
-            name: "fish",
+            key: TextureKeys.Tent,
             isInGame: true,
             isInInventory: false,
         }])
 
-    const addItem = (newItem: {
-        name: string;
-        isVisible: boolean;
-    }) => {
+    const addItem = (key: TextureKeys) => {
         items.value = items.value.map((item) => {
-            if (item.name === newItem.name) {
+            if (item.key === key) {
                 return {
                     ...item,
                     isInGame: false,
@@ -41,5 +35,9 @@ export const useInventoryStore = defineStore('inventory', () => {
         })
     };
 
-    return {items, addItem}
+    const getItem = (key: TextureKeys): InventoryItem | undefined => {
+        return items.value.find((item) => item.key === key)
+    }
+
+    return {items, addItem, getItem}
 })

@@ -1,4 +1,4 @@
-import { TextureKeys } from "@/constants";
+import { FrameKeys, TextureKeys } from "@/constants";
 
 const DEFAULT_TAKE_TEXT = "Das kann ich nicht mitnehmen"
 
@@ -11,6 +11,7 @@ export interface ItemData {
     interactable: boolean;
     lookAtText: string;
     takeText: string;
+    takenState: Array<FrameKeys | null>;
     interactionCondition: (item: TextureKeys) => void
 }
 
@@ -29,6 +30,24 @@ const items: Partial<InteractiveItemInterface> =
             interactable: true,
             lookAtText: "Ich habe sowas Monströses noch nie gesehen.",
             takeText: DEFAULT_TAKE_TEXT,
+            takenState: [null],
+            interactionCondition: function (interactWith: string) {
+                if (this.interactable) {
+                    // test
+                    console.log(`interact ${this.name} with ${interactWith}`)
+                }
+            },
+        },
+        logs: {
+            id: 2,
+            name: "Cholz",
+            altName: "Holzscheite",
+            key: TextureKeys.Logs,
+            removeable: true,
+            interactable: true,
+            lookAtText: "Damit könnte man Feuer machen",
+            takeText: "Eins kann ich mir ja mal nehmen.",
+            takenState: [FrameKeys.LogQuant2, FrameKeys.LogQuant1],
             interactionCondition: function (interactWith: string) {
                 if (this.interactable) {
                     // test

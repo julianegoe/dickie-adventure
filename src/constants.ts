@@ -23,6 +23,7 @@ enum TextureKeys {
     Sky = 'sky',
     Middleground = 'middleground',
     UiBox = 'ui_box',
+    Logs = 'logs',
 }
 
 enum CharacterKey {
@@ -58,6 +59,12 @@ enum AudioKeys {
     ArcticWinds = 'arctic_winds',
 }
 
+enum FrameKeys {
+    LogQuant1 = 'log_quantity_01',
+    LogQuant2 = 'log_quantity_02',
+    LogQuant3 = 'log_quantity_03',
+}
+
 export {
-    TextureKeys, SceneKeys, AnimationKeys, TilemapKeys, TilesetKeys, AudioKeys, CharacterKey
+    TextureKeys, SceneKeys, AnimationKeys, TilemapKeys, TilesetKeys, AudioKeys, CharacterKey, FrameKeys
 }

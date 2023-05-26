@@ -72,9 +72,9 @@ export class PreloadScene extends Phaser.Scene {
         this.load.image(TextureKeys.Take, 'take.png');
         this.load.image(TextureKeys.Inventory, 'inventory.png');
         this.load.image(TextureKeys.DialogueChoices, 'dialogue_choices.png');
-        this.load.image(TextureKeys.UiBox, 'ui/slice.png');
 
         this.load.atlas(CharacterKey.Explorer, "explorer.png", "explorer.json");
+        this.load.atlas(TextureKeys.Logs, "logs.png", "logs.json");
         this.load.atlas(TextureKeys.DickieMove, "dickie_version_1/dickie_move.png", "dickie_version_1/dickie_move.json");
         this.load.atlas(TextureKeys.Seal, "dickie_version_2/dickie_move.png", "dickie_version_2/dickie_move.json");
 

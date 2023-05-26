@@ -5,14 +5,13 @@ import Phaser, { Scene } from 'phaser'
 
 export default class InteractiveItem extends Phaser.GameObjects.Sprite {
 
-    private highlight!: Phaser.GameObjects.PointLight;
     private itemData!: ItemData;
 
-    constructor(scene: Scene, x: number, y: number, texture: string) {
-        super(scene, x, y, texture)
+    constructor(scene: Scene, x: number, y: number, texture: string, frame?: string) {
+        super(scene, x, y, texture, frame)
         this.setInteractive({ cursor: 'url(interact.cur), pointer' });
+        this.setData(items[this.texture.key as TextureKeys] as ItemData);
         this.itemData = items[this.texture.key as TextureKeys] as ItemData;
-        
     }
 
     public changeSizeOnHover(scaleBasis: number, scaleFactor: number) {
@@ -24,23 +23,20 @@ export default class InteractiveItem extends Phaser.GameObjects.Sprite {
         })
     }
 
-    public highlightOnHover() {
-        this.highlight = this.scene.add.pointlight(this.x, this.y, 0xfff, 190, 0.4).setVisible(false);
-        const text = this.scene.add.text(this.x - this.width, this.y - this.height - 10, "graues Ungetüm?", {
+    public shineOnHover() {
+        const text = this.scene.add.text(this.x - this.width, this.y - this.height - 10, this.itemData.name, {
             fontFamily: "'Press Start 2P'",
             color: "#000000",
-            fontSize: "14px"
-        }).setScrollFactor(this.scrollFactorX).setVisible(false);
-
+            fontSize: "14px",
+            backgroundColor: "#fff"
+        }).setScrollFactor(this.scrollFactorX).setVisible(false)
+        let fx!: Phaser.FX.Shine
         this.on('pointerover', () => {
-            this.highlight.setVisible(true)
-            .setScale(this.scale)
-            .setScrollFactor(this.scrollFactorX);
-
+            fx = this.postFX.addShine(1, .2, 5);
             text.setVisible(true)
-        })
+        });
         this.on('pointerout', () => {
-            this.highlight.setVisible(false);
+            this.postFX.remove(fx)
             text.setVisible(false)
         })
     }
@@ -55,8 +51,8 @@ export default class InteractiveItem extends Phaser.GameObjects.Sprite {
 }
 Phaser.GameObjects.GameObjectFactory.register(
     'interactiveItem',
-    function (this: Phaser.GameObjects.GameObjectFactory, x: number, y: number, texture: string) {
-        const interactiveItem = new InteractiveItem(this.scene, x, y, texture)
+    function (this: Phaser.GameObjects.GameObjectFactory, x: number, y: number, texture: string, frame: string) {
+        const interactiveItem = new InteractiveItem(this.scene, x, y, texture, frame)
         this.displayList.add(interactiveItem)
         this.updateList.add(interactiveItem)
 

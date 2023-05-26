@@ -12,6 +12,7 @@ export class GameScene extends Phaser.Scene {
     private backgrounds: { ratioX: number, sprite: Phaser.GameObjects.TileSprite }[] = [];
     private player!: Phaser.GameObjects.Sprite;
     private tent!: InteractiveItem;
+    private logs!: InteractiveItem;
     private explorer!: IInteractiveCharacter;
     private sealGroup!: Phaser.GameObjects.Group;
     private gameWidth!: number;
@@ -148,8 +149,13 @@ export class GameScene extends Phaser.Scene {
             .setOrigin(0.5)
             .setScale(3)
             .setScrollFactor(0.9)
-            .setVisible(this.isItemVisible(TextureKeys.Tent));
         this.add.existing(this.tent);
+
+        this.logs = new InteractiveItem(this, 2970, this.gameHeight - 150, TextureKeys.Logs, "log_quantity_03")
+            .setOrigin(0)
+            .setScale(1.8)
+            .setScrollFactor(0.9)
+        this.add.existing(this.logs);
 
         this.explorer = this.add.interactiveCharacter(2500, this.gameHeight - 290, CharacterKey.Explorer)
             .setOrigin(0)
@@ -175,9 +181,13 @@ export class GameScene extends Phaser.Scene {
         })
 
         // Game Objects Events
-        this.tent.highlightOnHover();
+        this.tent.shineOnHover();
         this.tent.onInteract((location, itemData) => {
             this.scene.launch(SceneKeys.InteractionMenu, { location, itemData })
+        });
+        this.logs.shineOnHover();
+        this.logs.onInteract((location, itemData) => {
+            this.scene.launch(SceneKeys.InteractionMenu, { location, itemData, item: this.logs })
         });
         this.explorer.showNameOnHover({ x: this.explorer.x, y: this.explorer.y - 100 });
         this.explorer.onTalkTo();
@@ -210,6 +220,6 @@ export class GameScene extends Phaser.Scene {
         this.sealGroup.children.entries.forEach((seal) => {
             const sealCopy = seal as Phaser.GameObjects.Sprite
             sealCopy.x -= 0.8
-        })
+        });
     }
 }

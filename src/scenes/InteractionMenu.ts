@@ -1,25 +1,29 @@
-import { SceneKeys, TextureKeys } from "@/constants";
+import { FrameKeys, SceneKeys, TextureKeys } from "@/constants";
 import Rectangle = Phaser.GameObjects.Rectangle;
 import Sprite = Phaser.GameObjects.Sprite;
-import { useInventoryStore } from "@/stores/inventory";
+import { useInventoryStore, type InventoryItem } from "@/stores/inventory";
 import type { ItemData } from "@/dialogues/itemObjects";
+import type { IInteractiveItem } from "@/interactiveItem";
 
 export default class InteractionMenu extends Phaser.Scene {
     private location!: { x: number, y: number };
     private itemData!: ItemData;
+    private item!: Sprite;
     private menuRectangle!: Sprite;
     private lookAt!: Sprite;
     private take!: Sprite;
     private displayText!: Phaser.GameObjects.Text
+    private currentItemStateIndex: number = 0;
+    private inventoryStore!: any;
 
     constructor() {
         super({ key: SceneKeys.InteractionMenu });
     }
 
-    private inventoryStory!: any;
-    init(data: { location: { x: number, y: number }, itemData: ItemData }) {
+    init(data: { location: { x: number, y: number }, itemData: ItemData, item: Sprite }) {
         this.location = data.location;
         this.itemData = data.itemData;
+        this.item = data.item;
         this.displayText = this.add.text(50, 50, "", {
             fontFamily: "'Press Start 2P'",
             fontSize: "16px",
@@ -36,14 +40,21 @@ export default class InteractionMenu extends Phaser.Scene {
 
     takeItem() {
         this.displayText.setText("")
-        if (this.itemData.removeable) {
-            this.inventoryStory.addItem(this.itemData.key)
-        }
         this.displayText.setText(this.itemData.takeText)
+        if (this.itemData.removeable) {
+            this.inventoryStore.addItem(this.itemData.key)
+            const newFrame = this.itemData.takenState[this.currentItemStateIndex];
+            if (newFrame) {
+                this.item.setFrame(newFrame);
+                this.currentItemStateIndex += 1;
+            } else {
+                this.item.setVisible(false)
+            }
+        }
     }
 
     create() {
-        this.inventoryStory = useInventoryStore()
+        this.inventoryStore= useInventoryStore()
         this.menuRectangle = this.add.sprite(this.location.x, this.location.y - 50, TextureKeys.InteractionMenu).setOrigin(0).setInteractive(new Phaser.Geom.Rectangle(this.location.x, this.location.y - 50, 200, 100), (item) => {
             return !item.contains(this.input.x, this.input.y)
         })

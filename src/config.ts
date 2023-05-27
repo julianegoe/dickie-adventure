@@ -3,7 +3,6 @@ import { PreloadScene } from "./scenes/PreloadScene";
 import { GameScene } from "./scenes/GameScene";
 import InteractionMenu from "./scenes/InteractionMenu";
 import Dialogue from "./scenes/Dialogue";
-import {Inventory} from "./scenes/Inventory";
 
 const launch = (id: string) => {
    return new Phaser.Game({
@@ -19,7 +18,7 @@ const launch = (id: string) => {
                 debug: false
             }
         },
-        scene: [BootScene, PreloadScene, GameScene, Inventory, InteractionMenu, Dialogue]
+        scene: [BootScene, PreloadScene, GameScene, InteractionMenu, Dialogue]
     })
 }
 

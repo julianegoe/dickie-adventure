@@ -68,7 +68,6 @@ export class PreloadScene extends Phaser.Scene {
         this.load.image(TextureKeys.Fish, 'fish.png');
         this.load.image(TextureKeys.LookAt, 'lookat.png');
         this.load.image(TextureKeys.Take, 'take.png');
-        this.load.image(TextureKeys.Inventory, 'inventory.png');
         this.load.image(TextureKeys.DialogueChoices, 'dialogue_choices.png');
         this.load.image(TextureKeys.UiBox, 'ui/slice.png')
 

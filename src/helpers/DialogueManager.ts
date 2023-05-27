@@ -1,4 +1,4 @@
-import { TextureKeys } from "@/constants";
+import { SceneKeys, TextureKeys } from "@/constants";
 import type { Choice, IDialogue } from "@/game-data/characters";
 import type { Scene } from "phaser";
 
@@ -37,6 +37,7 @@ class DialogueManager {
   }
 
   startDialogue(dialogueId: number) {
+    this.scene.scene.pause(SceneKeys.Game)
     const dialogue = this.dialogueData[dialogueId];
     if (dialogue) {
       this.currentNode = dialogue;
@@ -97,7 +98,7 @@ class DialogueManager {
 
   endDialogue() {
     this.clearDialogue();
-    // Perform any necessary cleanup or actions at the end of the dialogue
+    this.scene.scene.resume(SceneKeys.Game)
   }
 
   clearDialogue() {

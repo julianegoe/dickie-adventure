@@ -1,4 +1,4 @@
-import type { CharacterKey } from '@/constants';
+import { SceneKeys, type CharacterKey } from '@/constants';
 import { characters, type CharacterData } from '@/game-data/characters';
 import DialogueManager from '@/helpers/DialogueManager';
 import Phaser, { Scene } from 'phaser'
@@ -6,20 +6,19 @@ import Phaser, { Scene } from 'phaser'
 export default class InteractiveCharacter extends Phaser.GameObjects.Sprite {
 
     private characterData!: CharacterData;
-    private dialogueManager: DialogueManager;
     private dialogueNode: number = 0
 
 
     constructor(scene: Scene, x: number, y: number, texture: string) {
         super(scene, x, y, texture)
         this.characterData = characters[this.texture.key as CharacterKey] as CharacterData;
-        this.dialogueManager = new DialogueManager(this.scene, this.characterData.dialogue);
         this.setInteractive({ cursor: 'url(speak.cur), pointer' });
     }
 
     public onTalkTo() {
         this.on('pointerup', (event: Event) => {
-            this.dialogueManager.startDialogue(this.dialogueNode);
+            this.scene.scene.pause(SceneKeys.Game);
+            this.scene.scene.launch(SceneKeys.Dialogue, { characterData: this.characterData, startNode: this.dialogueNode});
         });
     }
 

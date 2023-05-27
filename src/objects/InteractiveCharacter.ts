@@ -1,5 +1,5 @@
 import type { CharacterKey } from '@/constants';
-import { characters, type CharacterData } from '@/dialogues/characters';
+import { characters, type CharacterData } from '@/game-data/characters';
 import DialogueManager from '@/helpers/DialogueManager';
 import Phaser, { Scene } from 'phaser'
 
@@ -7,6 +7,7 @@ export default class InteractiveCharacter extends Phaser.GameObjects.Sprite {
 
     private characterData!: CharacterData;
     private dialogueManager: DialogueManager;
+    private dialogueNode: number = 0
 
 
     constructor(scene: Scene, x: number, y: number, texture: string) {
@@ -18,8 +19,12 @@ export default class InteractiveCharacter extends Phaser.GameObjects.Sprite {
 
     public onTalkTo() {
         this.on('pointerup', (event: Event) => {
-            this.dialogueManager.startDialogue(0);
+            this.dialogueManager.startDialogue(this.dialogueNode);
         });
+    }
+
+    public setNextDialogueNode(node: number) {
+        this.dialogueNode = node;
     }
 
     public showNameOnHover(position: { x: number, y: number}) {

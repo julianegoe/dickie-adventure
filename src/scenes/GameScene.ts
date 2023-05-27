@@ -4,6 +4,8 @@ import { useInventoryStore } from "@/stores/inventory";
 import { useGameStore } from "@/stores/gameStore";
 import Vector2 = Phaser.Math.Vector2;
 import ItemController from "@/state-machines/ItemStateMachine";
+import QuestController, { Quest } from "@/state-machines/QuestStateMachine";
+import { quests } from "@/game-data/questData";
 
 export class GameScene extends Phaser.Scene {
     private cursors!: Phaser.Types.Input.Keyboard.CursorKeys | undefined;
@@ -13,16 +15,15 @@ export class GameScene extends Phaser.Scene {
     private player!: Phaser.GameObjects.Sprite;
     private tent!: InteractiveItem;
     private logs!: InteractiveItem;
-    private fish!: InteractiveItem;
     private explorer!: IInteractiveCharacter;
     private sealGroup!: Phaser.GameObjects.Group;
     private gameWidth!: number;
     private gameHeight!: number;
     private inventoryStore!: any;
-    private gameStore!: any;
     private fog!: Phaser.GameObjects.TileSprite;
     private water!: Phaser.GameObjects.TileSprite;
     private nineslice!: Phaser.GameObjects.NineSlice;
+    private bribeController!: QuestController;
 
     constructor() {
         super({ key: 'GameScene' });
@@ -117,15 +118,14 @@ export class GameScene extends Phaser.Scene {
         this.windSound = this.sound.add(AudioKeys.ArcticWinds)
     }
 
-    initStores() {
-        this.gameStore = useGameStore();
-        this.gameStore.setGameScene(true);
-        this.inventoryStore = useInventoryStore();
+    createBribeQuest(gameObject: Phaser.GameObjects.Sprite) {
+        const bribeQuest = new Quest(quests.theBribe, gameObject)
+        this.bribeController = new QuestController(bribeQuest);
+        this.bribeController.setState("locked");
     }
 
     create() {
         // Set Up Stuff
-        this.initStores();
         this.gameWidth = this.scale.width;
         this.gameHeight = this.scale.height;
         this.cursors = this.input.keyboard?.createCursorKeys();
@@ -165,18 +165,12 @@ export class GameScene extends Phaser.Scene {
         this.add.existing(this.logs);
         const logController = new ItemController(this.logs, inventoryGroup, this)
 
-        /* this.fish = new InteractiveItem(this, 100, this.gameHeight - 250, TextureKeys.Fish)
-            .setOrigin(0)
-            .setScale(1.8)
-            .setScrollFactor(0.9)
-        this.add.existing(this.fish);
-        const fishController = new ItemController(this.fish, inventoryGroup, this) */
-
         this.explorer = this.add.interactiveCharacter(2500, this.gameHeight - 390, CharacterKey.Explorer)
             .setOrigin(0)
             .setScale(2)
             .setScrollFactor(0.9)
         this.explorer.anims.play('explorer_wind');
+        this.createBribeQuest(this.explorer);
 
         this.player = this.createPlayer();
         myCam.startFollow(this.player, true, 0.05, 0.05);
@@ -205,11 +199,6 @@ export class GameScene extends Phaser.Scene {
             this.scene.launch(SceneKeys.InteractionMenu, { location, itemData, controller: logController})
         });
 
-        /* this.fish.shineOnHover();
-        this.fish.onInteract((location, itemData) => {
-            fishController.setState("inInventory");
-        });  */
-
         this.explorer.showNameOnHover({ x: this.explorer.x, y: this.explorer.y - 100 });
         this.explorer.onTalkTo();
 
@@ -217,6 +206,9 @@ export class GameScene extends Phaser.Scene {
     }
 
     update(dt: number) {
+        if (!this.logs.active) {
+            this.bribeController.setState("unlocked")
+        }
         if (this.cursors?.left.isDown) {
             this.velocityX -= 2.5;
 

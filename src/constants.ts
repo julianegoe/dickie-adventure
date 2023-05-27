@@ -62,6 +62,10 @@ enum FrameKeys {
     LogQuant3 = 'log_3',
 }
 
+enum QuestKeys {
+    TheBribe = 'theBribe',
+}
+
 export {
-    TextureKeys, SceneKeys, AnimationKeys, TilemapKeys, TilesetKeys, AudioKeys, CharacterKey, FrameKeys
+    TextureKeys, SceneKeys, AnimationKeys, TilemapKeys, TilesetKeys, AudioKeys, CharacterKey, FrameKeys, QuestKeys
 }

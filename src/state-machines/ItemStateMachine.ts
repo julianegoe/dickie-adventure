@@ -1,5 +1,3 @@
-import { TextureKeys } from "@/constants";
-import eventsCenter from "@/events/eventsCenter";
 import type InteractiveItem from "@/objects/InteractiveItem";
 import type { Scene } from "phaser";
 

@@ -2,7 +2,7 @@ import { SceneKeys, TextureKeys } from "@/constants";
 import Rectangle = Phaser.GameObjects.Rectangle;
 import Sprite = Phaser.GameObjects.Sprite;
 import { useInventoryStore } from "@/stores/inventory";
-import type { ItemData } from "@/dialogues/itemObjects";
+import type { ItemData } from "@/game-data/itemObjects";
 import eventsCenter from "@/events/eventsCenter";
 import type ItemController from "@/state-machines/ItemStateMachine";
 

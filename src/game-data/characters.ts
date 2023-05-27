@@ -6,6 +6,7 @@ export interface Choice {
 }
 
 export interface IDialogue {
+    index: number;
     text: string[] | string;
     choices: Choice[]
 }
@@ -31,6 +32,7 @@ const characters: Partial<InteractiveCharacterInterface> = {
         interactable: true,
         dialogue: [
             {
+                index: 0,
                 text: "Tach auch.",
                 choices: [
                     { text: "Challo, was bist du?", nextNode: 1 },
@@ -39,12 +41,14 @@ const characters: Partial<InteractiveCharacterInterface> = {
                 ]
             },
             {
+                index: 1,
                 text: "Ich bin Polarforscher und besorge mir gerade mein Abendessen",
                 choices: [
                     { text: "Darf ich was abhaben?", nextNode: 3 }
                 ]
             },
             {
+                index: 2,
                 text:"Du bist der erste Seehund, der mir in letzter Zeit begegnet ist",
                 choices: [
                     { text: "Doof.", nextNode: 4 },
@@ -52,6 +56,7 @@ const characters: Partial<InteractiveCharacterInterface> = {
                 ]
             },
             {
+                index: 3,
                 text: "Nein.",
                 choices: [
                     { text: "Bütteeeee", nextNode: 3 },
@@ -59,13 +64,55 @@ const characters: Partial<InteractiveCharacterInterface> = {
                 ]
             },
             {
+                index: 4,
                 text: "Hmm.",
                 choices: []
             },
             {
+                index: 5,
                 text: "Und nu?",
                 choices: [
                     { text: "Hilfst du mir bei der Suche nach meiner Familie?", nextNode: 3 },
+                ]
+            },
+            {
+                index: 6,
+                text: "Wo ist mein Holz?",
+                choices: [
+                    { text: "Ich hab in letzter Zeit kein Holz gesehen.", nextNode: 7 },
+                    { text: "Vielleicht wurde es ja geklaut?", nextNode: 8 },
+                    { text: "Weiß nicht...", nextNode: 9 },
+                ]
+            },
+            {
+                index: 7,
+                text: "Wo hast du es versteckt, du kleiner Gauner?",
+                choices: [
+                    { text: "Seh ich aus als könnte ich Holz tragen?", nextNode: 9 },
+                    { text: "In meiner Speckfalte.", nextNode: 9 },
+                ]
+            },
+            {
+                index: 8,
+                text: "Und ich kann mir vorstellen von wem, du kleiner Gauner.",
+                choices: [
+                    { text: "Ich geb dir das Holz, wenn du mit mir meine Familie suchst.", nextNode: 10 },
+                ]
+            },
+            {
+                index: 9,
+                text: "Wir können das hier den ganzen Tag machen: Wo ist mein Holz",
+                choices: [
+                    { text: "Ich hab in letzter Zeit kein Holz gesehen.", nextNode: 6 },
+                    { text: "Vielleicht wurde es ja geklaut.", nextNode: 8 },
+                    { text: "Weiß nicht...", nextNode: 6 },
+                ]
+            },
+            {
+                index: 10,
+                text: "Hab ich eine Wahl?",
+                choices: [
+                    { text: "Nein.", nextNode: 4 },
                 ]
             },
         ],

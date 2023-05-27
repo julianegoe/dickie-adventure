@@ -1,4 +1,4 @@
-import type { ItemData } from "./dialogues/itemObjects";
+import type { ItemData } from "./game-data/itemObjects";
 
 declare interface IInteractiveItem extends Phaser.GameObjects.Sprite
 {

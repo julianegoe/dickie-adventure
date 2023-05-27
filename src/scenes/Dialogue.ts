@@ -1,5 +1,5 @@
 import { SceneKeys } from "@/constants";
-import type { CharacterData } from "@/dialogues/characters";
+import type { CharacterData } from "@/game-data/characters";
 import DialogueManager from "@/helpers/DialogueManager";
 
 export default class Dialogue extends Phaser.Scene {

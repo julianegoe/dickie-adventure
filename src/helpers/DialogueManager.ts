@@ -1,5 +1,5 @@
 import { TextureKeys } from "@/constants";
-import type { Choice, IDialogue } from "@/dialogues/characters";
+import type { Choice, IDialogue } from "@/game-data/characters";
 import type { Scene } from "phaser";
 
 class DialogueManager {

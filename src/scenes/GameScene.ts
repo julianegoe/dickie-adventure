@@ -202,7 +202,7 @@ export class GameScene extends Phaser.Scene {
         });
         this.logs.shineOnHover();
         this.logs.onInteract((location, itemData) => {
-            logController.setState("inInventory");
+            this.scene.launch(SceneKeys.InteractionMenu, { location, itemData, controller: logController})
         });
 
         /* this.fish.shineOnHover();

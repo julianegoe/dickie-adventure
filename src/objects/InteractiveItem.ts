@@ -38,7 +38,7 @@ export default class InteractiveItem extends Phaser.GameObjects.Sprite {
         });
         this.on('pointerout', () => {
             this.postFX.remove(fx)
-            text.destroy()
+            text.setVisible(false)
         })
     }
 

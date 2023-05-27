@@ -4,31 +4,31 @@ import Sprite = Phaser.GameObjects.Sprite;
 import { useInventoryStore } from "@/stores/inventory";
 import type { ItemData } from "@/dialogues/itemObjects";
 import eventsCenter from "@/events/eventsCenter";
+import type ItemController from "@/state-machines/ItemStateMachine";
 
 export default class InteractionMenu extends Phaser.Scene {
     private location!: { x: number, y: number };
     private itemData!: ItemData;
-    private item!: Sprite;
     private menuRectangle!: Sprite;
     private lookAt!: Sprite;
     private take!: Sprite;
     private displayText!: Phaser.GameObjects.Text
-    private currentItemStateIndex: number = 1;
+    private controller!: ItemController;
 
     constructor() {
         super({ key: SceneKeys.InteractionMenu });
     }
 
-    init(data: { location: { x: number, y: number }, itemData: ItemData, item: Sprite }) {
+    init(data: { location: { x: number, y: number }, itemData: ItemData, controller: ItemController }) {
         this.location = data.location;
         this.itemData = data.itemData;
-        this.item = data.item;
         this.displayText = this.add.text(50, 50, "", {
             fontFamily: "'Press Start 2P'",
             fontSize: "16px",
             color: "#000",
             backgroundColor: "#fff"
         }).setOrigin(0);
+        this.controller = data.controller;
     }
     
     typewriteText(text: string | string[]) {
@@ -55,14 +55,7 @@ export default class InteractionMenu extends Phaser.Scene {
         this.displayText.setText("")
         this.typewriteText(this.itemData.takeText)
         if (this.itemData.removeable) {
-            eventsCenter.emit('itemTaken', this.item)
-            const newFrame = this.itemData.frames[this.currentItemStateIndex];
-            if (newFrame) {
-                this.item.setFrame(newFrame);
-                this.currentItemStateIndex += 1;
-            } else {
-                this.item.destroy()
-            }
+            this.controller.setState("inInventory");
         }
     }
 

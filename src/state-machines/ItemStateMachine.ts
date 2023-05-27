@@ -83,30 +83,6 @@ class InInventoryState {
     }
 }
 
-/* class InUseState {
-    private item!: Phaser.GameObjects.Sprite;
-
-    constructor(item: Phaser.GameObjects.Sprite) {
-        this.item = item
-    }
-
-    enter() {
-        // Enter function
-    }
-}
-
-class InCombineState {
-    private item!: Phaser.GameObjects.Sprite;
-
-    constructor(item: Phaser.GameObjects.Sprite) {
-        this.item = item
-    }
-
-    enter() {
-        // Enter function
-    }
-} */
-
 class QuestCompletedState {
     private item!: Phaser.GameObjects.Sprite;
     private inventoryGroup!: Phaser.GameObjects.Group;

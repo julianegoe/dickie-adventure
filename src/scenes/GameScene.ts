@@ -6,6 +6,7 @@ import Vector2 = Phaser.Math.Vector2;
 import ItemController from "@/state-machines/ItemStateMachine";
 import QuestController, { Quest } from "@/state-machines/QuestStateMachine";
 import { quests } from "@/game-data/questData";
+import eventsCenter from "@/events/eventsCenter";
 
 export class GameScene extends Phaser.Scene {
     private cursors!: Phaser.Types.Input.Keyboard.CursorKeys | undefined;
@@ -193,6 +194,7 @@ export class GameScene extends Phaser.Scene {
         this.tent.shineOnHover();
         this.tent.onInteract((location, itemData) => {
             this.scene.launch(SceneKeys.InteractionMenu, { location, itemData })
+            this.bribeController.setState("solve")
         });
         this.logs.shineOnHover();
         this.logs.onInteract((location, itemData) => {
@@ -202,12 +204,12 @@ export class GameScene extends Phaser.Scene {
         this.explorer.showNameOnHover({ x: this.explorer.x, y: this.explorer.y - 100 });
         this.explorer.onTalkTo();
 
-
+        eventsCenter.once("logsStolen", () => this.bribeController.setState("unlocked"))
     }
 
     update(dt: number) {
         if (!this.logs.active) {
-            this.bribeController.setState("unlocked")
+            eventsCenter.emit("logsStolen")
         }
         if (this.cursors?.left.isDown) {
             this.velocityX -= 2.5;

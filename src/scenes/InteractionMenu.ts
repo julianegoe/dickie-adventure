@@ -54,6 +54,7 @@ export default class InteractionMenu extends Phaser.Scene {
         if (this.itemData.removeable) {
             this.controller.setState("inInventory");
         }
+
     }
 
     create() {

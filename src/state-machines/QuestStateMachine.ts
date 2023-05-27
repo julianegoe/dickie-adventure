@@ -1,10 +1,10 @@
 import type { QuestData } from "@/game-data/questData";
 import type { Scene } from "phaser";
 
-type StateNames = "locked" | "unlocked" | "completed"
+type StateNames = "locked" | "unlocked" | "solve" | "completed"
 
 export class Quest {
-    private questData!: QuestData;
+    public questData!: QuestData;
     private gameObject!: Phaser.GameObjects.Sprite;
     private scene!: Scene;
     constructor(questData: QuestData, gameObject?: Phaser.GameObjects.Sprite, scene?: Scene) {
@@ -18,19 +18,27 @@ export class Quest {
     }
 
     startQuest() {
-        console.log("Quest started.");
+        console.log("Quest started: ", this.questData.name);
         this.questData.changes(this.gameObject);
+    }
+
+    testConditions() {
+        const isCompleted = this.questData.conditions();
+        console.log("quest completed?", isCompleted);
+
     }
 }
 
 export default class QuestController {
     private possibleStates!: { [key in StateNames]: { enter: (args?: any) => void } };
     private currentState!: { enter: () => void };
+    public currentStateName: StateNames = "locked";
 
     constructor(quest: Quest) {
         this.possibleStates = {
             locked: new LockedQuest(quest),
             unlocked: new UnlockedQuest(quest),
+            solve: new SolveQuest(quest),
             completed: new CompletedQuest(quest),
         }
     }
@@ -39,7 +47,11 @@ export default class QuestController {
         if (this.currentState === this.possibleStates[name]) {
             return
         }
-        this.currentState = this.possibleStates[name]
+        if (this.currentStateName === "locked" && name !== "unlocked") {
+            return
+        }
+        this.currentState = this.possibleStates[name];
+        this.currentStateName = name;
         this.currentState.enter()
     }
 }
@@ -51,7 +63,7 @@ class LockedQuest {
     }
 
     enter() {
-        console.log("quest locked: ", this.quest)
+        console.log("quest locked: ", this.quest.questData.name)
     }
 }
 
@@ -62,7 +74,20 @@ class UnlockedQuest {
     }
 
     enter() {
+        console.log("Quest unlocked: ", this.quest.questData.name)
         this.quest.startQuest()
+    }
+}
+
+class SolveQuest {
+    private quest!: Quest;
+    constructor(quest: Quest) {
+        this.quest = quest;
+    }
+
+    enter() {
+        console.log("Trying to solve quest: ", this.quest.questData.name)
+        this.quest.testConditions()
     }
 }
 
@@ -73,6 +98,6 @@ class CompletedQuest {
     }
 
     enter() {
-        console.log("quest completed: ", this.quest)
+        console.log("quest completed: ", this.quest.questData.name)
     }
 }

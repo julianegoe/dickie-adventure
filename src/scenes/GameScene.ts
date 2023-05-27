@@ -3,9 +3,9 @@ import InteractiveItem from "../objects/InteractiveItem";
 import { useInventoryStore } from "@/stores/inventory";
 import { useGameStore } from "@/stores/gameStore";
 import Vector2 = Phaser.Math.Vector2;
+import ItemController from "@/state-machines/ItemStateMachine";
 
 export class GameScene extends Phaser.Scene {
-
     private cursors!: Phaser.Types.Input.Keyboard.CursorKeys | undefined;
     private windSound!: Phaser.Sound.NoAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.WebAudioSound;
     private velocityX: number = 0;
@@ -22,6 +22,7 @@ export class GameScene extends Phaser.Scene {
     private gameStore!: any;
     private fog!: Phaser.GameObjects.TileSprite;
     private water!: Phaser.GameObjects.TileSprite;
+    private nineslice!: Phaser.GameObjects.NineSlice;
 
     constructor() {
         super({ key: 'GameScene' });
@@ -66,39 +67,39 @@ export class GameScene extends Phaser.Scene {
     createBackground() {
         this.backgrounds.push({
             ratioX: 0.1,
-            sprite: this.add.tileSprite(0, 0, this.gameWidth, this.gameHeight, TextureKeys.Sky)
+            sprite: this.add.tileSprite(0, 0, this.gameWidth, this.gameHeight - 100, TextureKeys.Sky)
                 .setOrigin(0)
                 .setScrollFactor(0)
                 .setScale(2,2)
         });
         this.backgrounds.push({
             ratioX: 0.3,
-            sprite: this.add.tileSprite(0, 0, this.gameWidth,  this.gameHeight, TextureKeys.Mountains)
+            sprite: this.add.tileSprite(0, 0, this.gameWidth, this.gameHeight - 100, TextureKeys.Mountains)
                 .setOrigin(0)
                 .setScrollFactor(0)
                 .setScale(2,2)
         });
         this.backgrounds.push({
             ratioX: 0.4,
-            sprite: this.add.tileSprite(0, 0, this.gameWidth, this.gameHeight, TextureKeys.Ground)
+            sprite: this.add.tileSprite(0, 0, this.gameWidth, this.gameHeight - 100, TextureKeys.Ground)
                 .setOrigin(0)
                 .setScrollFactor(0)
                 .setScale(2,2)
         })
         this.backgrounds.push({
             ratioX: 0.35,
-            sprite: this.add.tileSprite(0, 0, this.gameWidth, this.gameHeight, TextureKeys.Middleground)
+            sprite: this.add.tileSprite(0, 0, this.gameWidth, this.gameHeight - 100, TextureKeys.Middleground)
                 .setOrigin(0)
                 .setScrollFactor(0)
                 .setScale(2,2)
         });
-        this.fog = this.add.tileSprite(0, 0, this.gameWidth, this.gameHeight, TextureKeys.Fog)
+        this.fog = this.add.tileSprite(0, 0, this.gameWidth, this.gameHeight - 100, TextureKeys.Fog)
         .setOrigin(0)
         .setScrollFactor(0)
         .setAlpha(0.3)
         .setScale(2,2);
 
-        this.water = this.add.tileSprite(0, 0, this.gameWidth, this.gameHeight, TextureKeys.Water)
+        this.water = this.add.tileSprite(0, 0, this.gameWidth, this.gameHeight - 100, TextureKeys.Water)
             .setOrigin(0)
             .setScrollFactor(0)
             .setScale(2,2)
@@ -128,7 +129,6 @@ export class GameScene extends Phaser.Scene {
         this.gameWidth = this.scale.width;
         this.gameHeight = this.scale.height;
         this.cursors = this.input.keyboard?.createCursorKeys();
-        this.scene.launch(SceneKeys.Inventory);
         this.addSounds();
         this.windSound.play({
             mute: false,
@@ -146,6 +146,11 @@ export class GameScene extends Phaser.Scene {
         // Create Sprites
         this.createBackground();
         this.createNpc();
+        this.nineslice = this.add.nineslice(0, this.scale.height - 100, TextureKeys.UiBox, 0, 900, 100, 32, 32, 32, 32)
+            .setOrigin(0)
+            .setScrollFactor(0)
+            
+        const inventoryGroup = this.add.group();
 
         this.tent = new InteractiveItem(this, 2870, this.gameHeight - 310, TextureKeys.Tent)
             .setOrigin(0.5)
@@ -153,18 +158,19 @@ export class GameScene extends Phaser.Scene {
             .setScrollFactor(0.9)
         this.add.existing(this.tent);
 
-        this.logs = new InteractiveItem(this, 0, this.gameHeight - 250, TextureKeys.Logs, FrameKeys.LogQuant3)
+        this.logs = new InteractiveItem(this, 2970, this.gameHeight - 250, TextureKeys.Logs, FrameKeys.LogQuant3)
             .setOrigin(0)
             .setScale(1.8)
             .setScrollFactor(0.9)
         this.add.existing(this.logs);
-        // 2970
+        const logController = new ItemController(this.logs, inventoryGroup, this)
 
-        this.fish = new InteractiveItem(this, 100, this.gameHeight - 250, TextureKeys.Fish)
+        /* this.fish = new InteractiveItem(this, 100, this.gameHeight - 250, TextureKeys.Fish)
             .setOrigin(0)
             .setScale(1.8)
             .setScrollFactor(0.9)
         this.add.existing(this.fish);
+        const fishController = new ItemController(this.fish, inventoryGroup, this) */
 
         this.explorer = this.add.interactiveCharacter(2500, this.gameHeight - 390, CharacterKey.Explorer)
             .setOrigin(0)
@@ -196,13 +202,13 @@ export class GameScene extends Phaser.Scene {
         });
         this.logs.shineOnHover();
         this.logs.onInteract((location, itemData) => {
-            this.scene.launch(SceneKeys.InteractionMenu, { location, itemData, item: this.logs })
+            logController.setState("inInventory");
         });
 
-        this.fish.shineOnHover();
+        /* this.fish.shineOnHover();
         this.fish.onInteract((location, itemData) => {
-            this.scene.launch(SceneKeys.InteractionMenu, { location, itemData, item: this.fish })
-        });
+            fishController.setState("inInventory");
+        });  */
 
         this.explorer.showNameOnHover({ x: this.explorer.x, y: this.explorer.y - 100 });
         this.explorer.onTalkTo();

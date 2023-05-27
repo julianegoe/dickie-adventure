@@ -7,11 +7,12 @@ export default class InteractiveItem extends Phaser.GameObjects.Sprite {
 
     private itemData!: ItemData;
 
-    constructor(scene: Scene, x: number, y: number, texture: string, frame?: string) {
+    constructor(scene: Scene, x: number, y: number, texture: string, frame?: string | number) {
         super(scene, x, y, texture, frame)
         this.setInteractive({ cursor: 'url(interact.cur), pointer' });
         this.setData(items[this.texture.key as TextureKeys] as ItemData);
         this.itemData = items[this.texture.key as TextureKeys] as ItemData;
+        this.setName(texture);
     }
 
     public changeSizeOnHover(scaleBasis: number, scaleFactor: number) {
@@ -37,7 +38,7 @@ export default class InteractiveItem extends Phaser.GameObjects.Sprite {
         });
         this.on('pointerout', () => {
             this.postFX.remove(fx)
-            text.setVisible(false)
+            text.destroy()
         })
     }
 

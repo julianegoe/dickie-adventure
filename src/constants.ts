@@ -42,7 +42,6 @@ enum TilesetKeys {
 enum SceneKeys {
     Preloader = 'PreloadScene',
     Game = 'GameScene',
-    Inventory = 'Inventory',
     InteractionMenu = 'InteractionMenu',
     Dialogue = 'Dialogue',
     Snowfall = 'Snowfall'
@@ -52,7 +51,8 @@ enum AnimationKeys {
     DickieMoveLeft = 'move_left_',
     DickieMoveRight = 'move_right_',
     DickieIdle = 'idle_',
-    ExplorerWind = 'explorer_'
+    ExplorerWind = 'explorer_',
+    LogAnimation ='log_quantity_'
 }
 
 enum AudioKeys {
@@ -60,9 +60,9 @@ enum AudioKeys {
 }
 
 enum FrameKeys {
-    LogQuant1 = 'log_quantity_01',
-    LogQuant2 = 'log_quantity_02',
-    LogQuant3 = 'log_quantity_03',
+    LogQuant1 = 'log_1',
+    LogQuant2 = 'log_2',
+    LogQuant3 = 'log_3',
 }
 
 export {

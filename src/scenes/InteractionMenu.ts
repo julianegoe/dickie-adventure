@@ -55,7 +55,7 @@ export default class InteractionMenu extends Phaser.Scene {
         this.displayText.setText("")
         this.typewriteText(this.itemData.takeText)
         if (this.itemData.removeable) {
-            eventsCenter.emit('itemTaken', this.itemData, this.currentItemStateIndex)
+            eventsCenter.emit('itemTaken', this.item)
             const newFrame = this.itemData.frames[this.currentItemStateIndex];
             if (newFrame) {
                 this.item.setFrame(newFrame);

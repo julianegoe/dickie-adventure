@@ -4,6 +4,8 @@
   "compilerOptions": {
     "ignoreDeprecations": "5.0",
     "baseUrl": ".",
+    "target": "ESNext",
+    "lib": ["ESNext", "dom"],
     "paths": {
       "@/*": ["./src/*"]
     }

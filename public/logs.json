@@ -1,7 +1,7 @@
 {
     "frames": [
         {
-            "filename": "log_quantity_03",
+            "filename": "log_3",
             "frame": {
                 "x": 105,
                 "y": 1,
@@ -22,7 +22,7 @@
             }
         },
         {
-            "filename": "log_quantity_02",
+            "filename": "log_2",
             "frame": {
                 "x": 54,
                 "y": 10,
@@ -43,7 +43,7 @@
             }
         },
         {
-            "filename": "log_quantity_01",
+            "filename": "log_1",
             "frame": {
                 "x": 2,
                 "y": 11,

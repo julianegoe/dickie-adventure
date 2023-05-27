@@ -54,8 +54,6 @@ export class PreloadScene extends Phaser.Scene {
     }
 
     preload() {
-        // this.load.image(TextureKeys.Ice, '/background/mountains.png')
-        // this.load.tilemapTiledJSON(TilemapKeys.Mountains, '/background/mountains.json')
         this.load.addFile(new WebFontFile(this.load, 'VT323'));
         this.load.image(TextureKeys.Mountains, 'iceworld/mountains.png');
         this.load.image(TextureKeys.Foreground, 'iceworld/foreground.png');
@@ -84,7 +82,7 @@ export class PreloadScene extends Phaser.Scene {
 
     create() {
         this.createAnimations();
-        this.createExplorerAnimation()
+        this.createExplorerAnimation();
         this.input.setDefaultCursor('url(/crosshair.cur), pointer');
         this.scene.start(SceneKeys.Game);
     }

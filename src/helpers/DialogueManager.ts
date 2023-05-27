@@ -54,8 +54,8 @@ class DialogueManager {
       if (this.currentNode.choices && this.currentNode.choices.length > 0) {
         this.choices = this.currentNode.choices.map((choice, index) => {
           const choiceText = this.scene.add.text(
-            this.scene.scale.width * 0.04,
-            this.scene.scale.height * 0.8 + index * 30,
+            0,
+            0,
             choice.text,
             {
               fontSize: '14px',
@@ -72,6 +72,13 @@ class DialogueManager {
           });
           return choiceText;
         });
+        Phaser.Actions.GridAlign(this.choices, {
+          height: -1,
+          cellWidth: this.scene.scale.width,
+          cellHeight: 32,
+          x: this.scene.scale.width * 0.04,
+          y: this.scene.scale.height - 200,
+      });
       } else {
         setTimeout(() => this.endDialogue(), 2500)
       }

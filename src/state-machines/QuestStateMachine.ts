@@ -87,7 +87,7 @@ class SolveQuest {
 
     enter() {
         console.log("Trying to solve quest: ", this.quest.questData.name)
-        this.quest.testConditions()
+        this.quest.testConditions();
     }
 }
 

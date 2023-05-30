@@ -41,7 +41,8 @@ enum SceneKeys {
     Game = 'GameScene',
     InteractionMenu = 'InteractionMenu',
     Dialogue = 'Dialogue',
-    Snowfall = 'Snowfall'
+    Snowfall = 'Snowfall',
+    DisplayText = 'DisplayText',
 }
 
 enum AnimationKeys {

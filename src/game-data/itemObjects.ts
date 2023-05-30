@@ -60,13 +60,13 @@ const items: Partial<InteractiveItemInterface> =
         },
         fish: {
             id: 2,
-            name: "Cholz",
-            altName: "Holzscheite",
+            name: "Fisch",
+            altName: "Fisch",
             key: TextureKeys.Fish,
             removeable: true,
             interactable: true,
-            lookAtText: "Damit könnte man Feuer machen",
-            takeText: "Eins kann ich mir ja mal nehmen.",
+            lookAtText: "Hmmm lecker.",
+            takeText: "Meins.",
             frames: [],
             initialFrame: TextureKeys.Fish,
             interactionCondition: function (interactWith: string) {

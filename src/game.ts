@@ -5,6 +5,7 @@ import InteractionMenu from "@/scenes/InteractionMenu";
 import Dialogue from "@/scenes/Dialogue";
 import {BootScene} from "@/scenes/BootScene";
 import { SnowScene } from "./scenes/SnowScene";
+import DisplayText from "./scenes/DisplayText";
 
 function launch(containerId: string) {
     return new Phaser.Game({
@@ -20,7 +21,7 @@ function launch(containerId: string) {
                 debug: false
             }
         },
-        scene: [BootScene, PreloadScene, GameScene, InteractionMenu, Dialogue, SnowScene]
+        scene: [BootScene, PreloadScene, GameScene, InteractionMenu, Dialogue, SnowScene, DisplayText]
     })
 }
 

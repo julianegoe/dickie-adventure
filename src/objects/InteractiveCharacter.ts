@@ -15,8 +15,8 @@ export default class InteractiveCharacter extends Phaser.GameObjects.Sprite {
         this.setInteractive({ cursor: 'url(speak.cur), pointer' });
     }
 
-    public onTalkTo() {
-        this.on('pointerup', (event: Event) => {
+    public talkTo() {
+        this.on('pointerup', () => {
             this.scene.scene.pause(SceneKeys.Game);
             this.scene.scene.launch(SceneKeys.Dialogue, { characterData: this.characterData, startNode: this.dialogueNode});
         });

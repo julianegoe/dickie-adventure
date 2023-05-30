@@ -25,20 +25,22 @@ export default class InteractiveItem extends Phaser.GameObjects.Sprite {
     }
 
     public shineOnHover() {
+        let fx!: Phaser.FX.Shine;
+        console.log(this.scrollFactorX)
         const text = this.scene.add.text(this.x - this.width, this.y - this.height - 10, this.itemData.name, {
             fontFamily: "'Press Start 2P'",
             color: "#000000",
             fontSize: "14px",
-            backgroundColor: "#fff"
-        }).setScrollFactor(this.scrollFactorX).setVisible(false)
-        let fx!: Phaser.FX.Shine
+            backgroundColor: "#fff",
+            wordWrap: { width: this.scene.scale.width - 50, useAdvancedWrap: true }
+        }).setScrollFactor(this.scrollFactorX).setOrigin(0).setVisible(false)
         this.on('pointerover', () => {
             fx = this.postFX.addShine(0.7, .2, 5);
-            text.setVisible(true)
+            text.setVisible(true);
         });
         this.on('pointerout', () => {
             this.postFX.remove(fx)
-            text.setVisible(false)
+            text.setVisible(false);
         })
     }
 

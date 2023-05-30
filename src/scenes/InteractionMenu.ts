@@ -10,13 +10,13 @@ export default class InteractionMenu extends Phaser.Scene {
     private lookAt!: Sprite;
     private take!: Sprite;
     private displayText!: Phaser.GameObjects.Text
-    private controller!: ItemController;
+    private itemController!: ItemController;
 
     constructor() {
         super({ key: SceneKeys.InteractionMenu });
     }
 
-    init(data: { location: { x: number, y: number }, itemData: ItemData, controller: ItemController }) {
+    init(data: { location: { x: number, y: number }, itemData: ItemData, itemController: ItemController }) {
         this.location = data.location;
         this.itemData = data.itemData;
         this.displayText = this.add.text(50, 50, "", {
@@ -25,7 +25,7 @@ export default class InteractionMenu extends Phaser.Scene {
             color: "#000",
             backgroundColor: "#fff"
         }).setOrigin(0);
-        this.controller = data.controller;
+        this.itemController = data.itemController;
     }
     
     typewriteText(text: string | string[]) {
@@ -49,10 +49,10 @@ export default class InteractionMenu extends Phaser.Scene {
     }
 
     takeItem() {
-        this.displayText.setText("")
+        this.displayText.setText("");
         this.typewriteText(this.itemData.takeText)
         if (this.itemData.removeable) {
-            this.controller.setState("inInventory");
+            this.itemController.setState("inInventory");
         }
 
     }

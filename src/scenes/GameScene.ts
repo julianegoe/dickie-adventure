@@ -1,7 +1,5 @@
 import { AnimationKeys, AudioKeys, CharacterKey, FrameKeys, SceneKeys, TextureKeys } from "@/constants";
 import InteractiveItem from "../objects/InteractiveItem";
-import { useInventoryStore } from "@/stores/inventory";
-import { useGameStore } from "@/stores/gameStore";
 import Vector2 = Phaser.Math.Vector2;
 import ItemController from "@/state-machines/ItemStateMachine";
 import QuestController, { Quest } from "@/state-machines/QuestStateMachine";
@@ -20,14 +18,12 @@ export class GameScene extends Phaser.Scene {
     private sealGroup!: Phaser.GameObjects.Group;
     private gameWidth!: number;
     private gameHeight!: number;
-    private inventoryStore!: any;
     private fog!: Phaser.GameObjects.TileSprite;
     private water!: Phaser.GameObjects.TileSprite;
-    private nineslice!: Phaser.GameObjects.NineSlice;
     private bribeController!: QuestController;
 
     constructor() {
-        super({ key: 'GameScene' });
+        super({ key: SceneKeys.Game });
     }
 
     createPlayer() {
@@ -107,14 +103,6 @@ export class GameScene extends Phaser.Scene {
             .setScale(2,2)
     }
 
-    createInterActiveItem(texture: string, position: Vector2, scale: number) {
-        return new InteractiveItem(this, position.x, position.y, texture).setScale(scale).setVisible(this.isItemVisible(texture));
-    }
-
-    isItemVisible(itemName: string) {
-        return this.inventoryStore.items.find((item: any) => item.name === itemName)?.isInGame
-    }
-
     addSounds() {
         this.windSound = this.sound.add(AudioKeys.ArcticWinds)
     }
@@ -142,12 +130,12 @@ export class GameScene extends Phaser.Scene {
         })
         const myCam = this.cameras.main;
         myCam.setBackgroundColor('#dce2ed')
-        myCam.setBounds(0, 0, this.gameWidth * 5, this.gameHeight);
+        myCam.setBounds(0, 0, this.gameWidth * 5, this.gameHeight)
 
         // Create Sprites
         this.createBackground();
         this.createNpc();
-        this.nineslice = this.add.nineslice(0, this.scale.height - 100, TextureKeys.UiBox, 0, 900, 100, 32, 32, 32, 32)
+        this.add.nineslice(0, this.scale.height - 100, TextureKeys.UiBox, 0, 900, 100, 32, 32, 32, 32)
             .setOrigin(0)
             .setScrollFactor(0)
             
@@ -175,9 +163,6 @@ export class GameScene extends Phaser.Scene {
 
         this.player = this.createPlayer();
         myCam.startFollow(this.player, true, 0.05, 0.05);
-        this.scene.launch(SceneKeys.Snowfall, {
-            player: this.player,
-        });
 
         this.add.text(this.gameWidth * 1.5, 200, 'Challo?', {
             fontSize: '16px',
@@ -194,20 +179,24 @@ export class GameScene extends Phaser.Scene {
         this.tent.shineOnHover();
         this.tent.onInteract((location, itemData) => {
             this.scene.launch(SceneKeys.InteractionMenu, { location, itemData })
-            this.bribeController.setState("solve")
         });
         this.logs.shineOnHover();
         this.logs.onInteract((location, itemData) => {
-            this.scene.launch(SceneKeys.InteractionMenu, { location, itemData, controller: logController})
+            this.scene.launch(SceneKeys.InteractionMenu, { location, itemData, itemController: logController})
         });
 
         this.explorer.showNameOnHover({ x: this.explorer.x, y: this.explorer.y - 100 });
-        this.explorer.onTalkTo();
+        this.explorer.talkTo()
 
+        this.scene.launch(SceneKeys.Snowfall, {
+            player: this.player,
+        })
+
+        // Quest Triggers
         eventsCenter.once("logsStolen", () => this.bribeController.setState("unlocked"))
     }
 
-    update(dt: number) {
+    update(dt: number, fr: number) {
         if (!this.logs.active) {
             eventsCenter.emit("logsStolen")
         }
@@ -217,7 +206,7 @@ export class GameScene extends Phaser.Scene {
             this.player.anims.play('left', true);
         }
         else if (this.cursors?.right.isDown) {
-            this.velocityX += 2.5;
+            this.velocityX += 4.5;
 
             this.player.anims.play('right', true);
         } else {
@@ -230,7 +219,7 @@ export class GameScene extends Phaser.Scene {
             bg.sprite.tilePositionX = this.cameras.main.scrollX * bg.ratioX
         })
         this.fog.tilePositionX += 1.8
-        this.water.tilePositionX += 1.8
+        this.water.tilePositionX += 1.4
 
         this.sealGroup.children.entries.forEach((seal) => {
             const sealCopy = seal as Phaser.GameObjects.Sprite

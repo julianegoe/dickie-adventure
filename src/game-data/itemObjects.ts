@@ -1,4 +1,5 @@
 import { FrameKeys, TextureKeys } from "@/constants";
+import type InteractiveItem from "@/objects/InteractiveItem";
 
 const DEFAULT_TAKE_TEXT = "Das kann ich nicht mitnehmen"
 
@@ -13,7 +14,7 @@ export interface ItemData {
     takeText: string;
     frames: Array<FrameKeys>;
     initialFrame: FrameKeys | string;
-    interactionCondition: (item: TextureKeys) => void
+    interactionCondition: (item: Phaser.GameObjects.Sprite | InteractiveItem) => boolean
 }
 
 export type InteractiveItemInterface = {
@@ -33,10 +34,12 @@ const items: Partial<InteractiveItemInterface> =
             takeText: DEFAULT_TAKE_TEXT,
             frames: [],
             initialFrame: TextureKeys.Tent,
-            interactionCondition: function (interactWith: string) {
-                if (this.interactable) {
-                    // test
-                    console.log(`interact ${this.name} with ${interactWith}`)
+            interactionCondition: function (interactWith:  Phaser.GameObjects.Sprite | InteractiveItem) {
+                if (interactWith.getData("interactable")) {
+                    console.log(`interact Zelt with ${interactWith.name}`)
+                    return true;
+                } else {
+                    return false;
                 }
             },
         },
@@ -51,15 +54,32 @@ const items: Partial<InteractiveItemInterface> =
             takeText: "Eins kann ich mir ja mal nehmen.",
             initialFrame: FrameKeys.LogQuant3,
             frames: [FrameKeys.LogQuant3, FrameKeys.LogQuant2, FrameKeys.LogQuant1],
-            interactionCondition: function (interactWith: string) {
-                if (this.interactable) {
-                    // test
-                    console.log(`interact ${this.name} with ${interactWith}`)
+            interactionCondition: function (interactWith: Phaser.GameObjects.Sprite | InteractiveItem) {
+                if (interactWith.getData("interactable")) {
+                    console.log(`interact Holz with ${interactWith.name}`)
+                    return true;
                 }
+                return false;
+            },
+        },
+        bonfire: {
+            id: 3,
+            name: "Feuerstelle",
+            altName: "Feuerstelle",
+            key: TextureKeys.Bonfire,
+            removeable: false,
+            interactable: true,
+            lookAtText: "Brennt nicht.",
+            takeText: "Hmm?",
+            initialFrame: FrameKeys.Bonfire1,
+            frames: [FrameKeys.Bonfire1, FrameKeys.Bonfire2],
+            interactionCondition: function (interactWith: Phaser.GameObjects.Sprite | InteractiveItem) {
+                console.log(`interact Bonfire with ${interactWith.name}`);
+                return true
             },
         },
         fish: {
-            id: 2,
+            id: 4,
             name: "Fisch",
             altName: "Fisch",
             key: TextureKeys.Fish,
@@ -69,11 +89,12 @@ const items: Partial<InteractiveItemInterface> =
             takeText: "Meins.",
             frames: [],
             initialFrame: TextureKeys.Fish,
-            interactionCondition: function (interactWith: string) {
-                if (this.interactable) {
-                    // test
-                    console.log(`interact ${this.name} with ${interactWith}`)
+            interactionCondition: function (interactWith: Phaser.GameObjects.Sprite | InteractiveItem) {
+                if (interactWith.getData("interactable")) {
+                    console.log(`interact Fisch with ${interactWith.name}`);
+                    return true;
                 }
+                return false;
             },
         }
     }

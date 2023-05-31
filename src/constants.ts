@@ -21,6 +21,7 @@ enum TextureKeys {
     Middleground = 'middleground',
     UiBox = 'ui_box',
     Logs = 'logs',
+    Bonfire = 'bonfire',
 }
 
 enum CharacterKey {
@@ -29,10 +30,6 @@ enum CharacterKey {
 }
 
 enum TilemapKeys {
-    Mountains = 'mountains',
-}
-
-enum TilesetKeys {
     Mountains = 'mountains',
 }
 
@@ -61,6 +58,8 @@ enum FrameKeys {
     LogQuant1 = 'log_1',
     LogQuant2 = 'log_2',
     LogQuant3 = 'log_3',
+    Bonfire1 = 'bonfire_01',
+    Bonfire2 = 'bonfire_02',
 }
 
 enum QuestKeys {
@@ -68,5 +67,5 @@ enum QuestKeys {
 }
 
 export {
-    TextureKeys, SceneKeys, AnimationKeys, TilemapKeys, TilesetKeys, AudioKeys, CharacterKey, FrameKeys, QuestKeys
+    TextureKeys, SceneKeys, AnimationKeys, TilemapKeys, AudioKeys, CharacterKey, FrameKeys, QuestKeys
 }

@@ -1,11 +1,11 @@
 import { AnimationKeys, AudioKeys, CharacterKey, FrameKeys, SceneKeys, TextureKeys } from "@/constants";
 import InteractiveItem from "../objects/InteractiveItem";
 import Vector2 = Phaser.Math.Vector2;
-import ItemController from "@/state-machines/ItemStateMachine";
-import QuestController, { Quest } from "@/state-machines/QuestStateMachine";
+import { Quest } from "@/state-machines/QuestStateMachine";
 import { quests } from "@/game-data/questData";
 import eventsCenter from "@/events/eventsCenter";
 import type { ItemData } from "@/game-data/itemObjects";
+import { InteractionManager } from "@/state-machines/InteractionManager";
 
 export class GameScene extends Phaser.Scene {
     private cursors!: Phaser.Types.Input.Keyboard.CursorKeys | undefined;
@@ -15,13 +15,15 @@ export class GameScene extends Phaser.Scene {
     private player!: Phaser.GameObjects.Sprite;
     private tent!: InteractiveItem;
     private logs!: InteractiveItem;
+    private bonfire!: InteractiveItem;
     private explorer!: IInteractiveCharacter;
     private sealGroup!: Phaser.GameObjects.Group;
     private gameWidth!: number;
     private gameHeight!: number;
     private fog!: Phaser.GameObjects.TileSprite;
     private water!: Phaser.GameObjects.TileSprite;
-    private bribeController!: QuestController;
+    private bribeQuest!: Quest;
+    private interactionManager!: InteractionManager;
 
     constructor() {
         super({ key: SceneKeys.Game });
@@ -109,9 +111,8 @@ export class GameScene extends Phaser.Scene {
     }
 
     createBribeQuest(gameObject: Phaser.GameObjects.Sprite) {
-        const bribeQuest = new Quest(quests.theBribe, gameObject)
-        this.bribeController = new QuestController(bribeQuest);
-        this.bribeController.setState("locked");
+        this.bribeQuest = new Quest(quests.theBribe, gameObject)
+        this.bribeQuest.controller.setState("locked");
     }
 
     create() {
@@ -130,8 +131,10 @@ export class GameScene extends Phaser.Scene {
             delay: 0,
         })
         const myCam = this.cameras.main;
-        myCam.setBackgroundColor('#dce2ed')
-        myCam.setBounds(0, 0, this.gameWidth * 5, this.gameHeight)
+        myCam.setBackgroundColor('#dce2ed');
+        myCam.setBounds(0, 0, this.gameWidth * 5, this.gameHeight);
+        
+        this.interactionManager = new InteractionManager(this)
 
         // Create Sprites
         this.createBackground();
@@ -149,9 +152,13 @@ export class GameScene extends Phaser.Scene {
 
         this.logs = new InteractiveItem(this, 2970, this.gameHeight - 250, TextureKeys.Logs, FrameKeys.LogQuant3)
             .setOrigin(0)
-            .setScale(1.8)
+            .setScale(1.5)
         this.add.existing(this.logs);
-        const logController = new ItemController(this.logs, inventoryGroup, this)
+
+        this.bonfire = new InteractiveItem(this, 3100, this.gameHeight - 320, TextureKeys.Bonfire, FrameKeys.Bonfire1)
+            .setOrigin(0)
+            .setScale(1.5)
+        this.add.existing(this.bonfire);
 
         this.explorer = this.add.interactiveCharacter(2500, this.gameHeight - 390, CharacterKey.Explorer)
             .setOrigin(0)
@@ -174,27 +181,26 @@ export class GameScene extends Phaser.Scene {
             color: "#000000",
         })
 
-        // Game Objects Events
-        this.tent.on("interact", (itemData: ItemData, pointer: Phaser.Math.Vector2) => {
-            this.scene.launch(SceneKeys.InteractionMenu, { location: pointer, itemData, itemController: null});
-        })
 
-        this.logs.on("interact", (itemData: ItemData, pointer: Phaser.Math.Vector2) => {
-            this.scene.launch(SceneKeys.InteractionMenu, { location: pointer, itemData, itemController: logController})
-        })
-
-        // Global Events
-        eventsCenter.on("lookAtItem", (itemData: ItemData, itemController: ItemController) => {
-            this.scene.launch(SceneKeys.DisplayText, { text: itemData.lookAtText })
+        // Item Triggers
+        eventsCenter.on("lookAtItem", (item: InteractiveItem) => {
+            this.scene.launch(SceneKeys.DisplayText, { text: item.getData("lookAtText"), autoDelete: true })
         });
-        eventsCenter.on("takeItem", (itemData: ItemData, itemController: ItemController) => {
-            this.scene.launch(SceneKeys.DisplayText, { text: itemData.takeText });
-            if (itemData.removeable) {
-                itemController.setState("inInventory");
+        eventsCenter.on("takeItem", (item: InteractiveItem) => {
+            this.scene.launch(SceneKeys.DisplayText, { text: item.getData("takeText"), autoDelete: true });
+            if (item.getData("removeable")) {
+                item.controller.setState("inInventory");
             }
         });
-        eventsCenter.on("interact", (item: Phaser.GameObjects.Sprite) => {
-            item.alpha === 1 ? item.setAlpha(0.7) : item.setAlpha(1)
+
+        eventsCenter.on("interactInWorld", (item: InteractiveItem, pointer: Phaser.Math.Vector2) => {
+            this.interactionManager.useWith(item);
+            this.scene.launch(SceneKeys.InteractionMenu, { item, pointer })
+        })
+
+        eventsCenter.on("interactInInventory", (item: Phaser.GameObjects.Sprite) => {
+            item.alpha === 1 ? item.setAlpha(0.7) : item.setAlpha(1);
+            this.interactionManager.setItem(item);
         })
 
         this.scene.launch(SceneKeys.Snowfall, {
@@ -202,7 +208,7 @@ export class GameScene extends Phaser.Scene {
         })
 
         // Quest Triggers
-        eventsCenter.once("logsStolen", () => this.bribeController.setState("unlocked"))
+        eventsCenter.once("logsStolen", () => this.bribeQuest.controller.setState("unlocked"))
     }
 
     update(dt: number, fr: number) {
@@ -228,7 +234,7 @@ export class GameScene extends Phaser.Scene {
             bg.sprite.tilePositionX = this.cameras.main.scrollX * bg.ratioX
         })
         this.fog.tilePositionX += 1.8
-        this.water.tilePositionX += 1.4
+        this.water.tilePositionX += 0.8
 
         this.sealGroup.children.entries.forEach((seal) => {
             const sealCopy = seal as Phaser.GameObjects.Sprite

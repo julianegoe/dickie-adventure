@@ -1,11 +1,14 @@
 import type { TextureKeys } from '@/constants';
+import eventsCenter from '@/events/eventsCenter';
 import type { ItemData } from '@/game-data/itemObjects';
 import { items } from '@/game-data/itemObjects';
+import ItemController from '@/state-machines/ItemStateMachine';
 import Phaser, { Scene } from 'phaser'
 
 export default class InteractiveItem extends Phaser.GameObjects.Sprite {
 
     private itemData!: ItemData;
+    public controller!: ItemController;
 
     constructor(scene: Scene, x: number, y: number, texture: string, frame?: string | number) {
         super(scene, x, y, texture, frame)
@@ -15,7 +18,8 @@ export default class InteractiveItem extends Phaser.GameObjects.Sprite {
         this.itemData = items[this.texture.key as TextureKeys] as ItemData;
         this.setName(texture);
         this.on("pointerdown", (pointer: Phaser.Math.Vector2) => {
-            this.emit("interact", this.itemData, pointer)
+            this.emit("interact", this.itemData, pointer);
+            eventsCenter.emit("interactInWorld", this, pointer);
         });
         let fx!: Phaser.FX.Shine;
         const text = this.scene.add.text(this.x - this.width, this.y - this.height - 10, this.itemData.name, {
@@ -33,6 +37,11 @@ export default class InteractiveItem extends Phaser.GameObjects.Sprite {
             this.postFX.remove(fx)
             text.setVisible(false);
         })
+        this.createController()
+    }
+
+    private createController() {
+        this.controller = new ItemController(this, this.scene)
     }
 }
 Phaser.GameObjects.GameObjectFactory.register(

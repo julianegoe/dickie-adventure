@@ -6,7 +6,6 @@ class DialogueManager {
   private scene!: Scene;
   private dialogueData: IDialogue[] = [];
   private currentNode!: IDialogue;
-  private dialogueText!: Phaser.GameObjects.Text;
   private choices!: Phaser.GameObjects.Text[] | null;
   private dialogueGraphics!: Phaser.GameObjects.Graphics | null;
 
@@ -14,13 +13,6 @@ class DialogueManager {
     this.scene = scene;
     this.dialogueData = dialogueData;
     this.currentNode = this.dialogueData[0];
-    this.dialogueText = this.scene.add.text(this.scene.scale.width * 0.16, 100, "", {
-      fontSize: '14px',
-      fontFamily: "'Press Start 2P'",
-      color: "#000000",
-      backgroundColor: "#fff",
-      wordWrap: { width: 500, useAdvancedWrap: true },
-    }).setOrigin(0).setScrollFactor(0);
   }
 
   startDialogue(dialogueId: number) {
@@ -36,7 +28,7 @@ class DialogueManager {
     if (this.currentNode) {
       this.clearDialogue();
       // Display the dialogue text
-      this.scene.scene.launch(SceneKeys.DisplayText, { text: this.currentNode.text });
+      this.scene.scene.launch(SceneKeys.DisplayText, { text: this.currentNode.text, autoDelete: false });
       // Display choices if available
       if (this.currentNode.choices && this.currentNode.choices.length > 0) {
         this.choices = this.currentNode.choices.map((choice, index) => {
@@ -93,8 +85,8 @@ class DialogueManager {
       this.dialogueGraphics = null;
     }
 
-    if (this.dialogueText) {
-      this.dialogueText.setText("");
+    if (this.scene.scene.isActive(SceneKeys.DisplayText)) {
+      this.scene.scene.stop(SceneKeys.DisplayText);
     }
 
     if (this.choices) {

@@ -7,6 +7,8 @@ export class Quest {
     public questData!: QuestData;
     private gameObject!: Phaser.GameObjects.Sprite;
     private scene!: Scene;
+    public controller!: QuestController;
+
     constructor(questData: QuestData, gameObject?: Phaser.GameObjects.Sprite, scene?: Scene) {
         this.questData = questData;
         if (gameObject) {
@@ -15,6 +17,7 @@ export class Quest {
         if (scene) {
             this.scene = scene;
         }
+        this.controller = new QuestController(this);
     }
 
     startQuest() {
@@ -23,9 +26,8 @@ export class Quest {
     }
 
     testConditions() {
-        const isCompleted = this.questData.conditions();
+        const isCompleted = this.questData.conditions(this);
         console.log("quest completed?", isCompleted);
-
     }
 }
 

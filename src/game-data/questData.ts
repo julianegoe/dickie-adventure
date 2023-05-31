@@ -1,5 +1,6 @@
 import type { QuestKeys } from "@/constants";
 import type InteractiveCharacter from "@/objects/InteractiveCharacter";
+import type { Quest } from "@/state-machines/QuestStateMachine";
 
 export interface QuestData {
     name: string;
@@ -17,7 +18,8 @@ export const quests: QuestInterface = {
         changes: (explorer: InteractiveCharacter) => {
             explorer.setNextDialogueNode(6)
         },
-        conditions: () => {
+        conditions: (bribeQuest: Quest) => {
+            console.log(bribeQuest)
             return false;
         },
         hint: "Vielleicht lockert das seine Zunge. Chöchöchö.",

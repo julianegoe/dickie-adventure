@@ -1,22 +1,19 @@
-import type { TextureKeys } from "@/constants";
 import eventsCenter from "@/events/eventsCenter";
-import type { ItemData } from "@/game-data/itemObjects";
 import type InteractiveItem from "@/objects/InteractiveItem";
 import type { Scene } from "phaser";
 
-type StateNames = "inWorld" | "inInventory" | "solveQuest" | "questCompleted"
+type StateNames = "inWorld" | "inInventory" | "questCompleted"
 
 export default class ItemController {
     private possibleStates!: { [key in StateNames]: { enter: (args?: any) => void } };
     private currentState!: { enter: () => void };
 
-    constructor(item: InteractiveItem, inventoryGroup: Phaser.GameObjects.Group, scene: Scene) {
+    constructor(item: InteractiveItem, scene: Scene) {
         const frames = item.getData("frames") as string[];
         this.possibleStates = {
             inWorld: new InWorldState(item),
-            inInventory: new InInventoryState(item, inventoryGroup, scene, frames),
-            solveQuest: new SolveQuestState(item, inventoryGroup),
-            questCompleted: new QuestCompletedState(item, inventoryGroup),
+            inInventory: new InInventoryState(item, scene, frames),
+            questCompleted: new QuestCompletedState(item),
         }
     }
 
@@ -43,16 +40,14 @@ class InWorldState {
 
 class InInventoryState {
     private item!: Phaser.GameObjects.Sprite;
-    private inventoryGroup!: Phaser.GameObjects.Group;
     private scene!: Scene;
     private readonly frames!: string[];
     private currentCloneFrame!: number;
     private currentItemFrame: number = 0;
     private clone!: Phaser.GameObjects.Sprite;
 
-    constructor(item: Phaser.GameObjects.Sprite, inventoryGroup: Phaser.GameObjects.Group, scene: Scene, frames: string[]) {
+    constructor(item: Phaser.GameObjects.Sprite, scene: Scene, frames: string[]) {
         this.item = item;
-        this.inventoryGroup = inventoryGroup;
         this.scene = scene;
         this.frames = frames
         this.currentCloneFrame = this.frames.length;
@@ -61,15 +56,18 @@ class InInventoryState {
             .setOrigin(0)
             .setScale(2)
             .setVisible(false)
-            .setInteractive();
-        this.clone.on("pointerdown", () => eventsCenter.emit("interact", this.clone))
+            .setInteractive()
+            .setData(this.item.data.values)
+            .setName(this.item.name);
+        this.clone.on("pointerdown", () => eventsCenter.emit("interactInInventory", this.clone))
 
     }
 
     enter() {
         this.currentCloneFrame -= 1;
         this.currentItemFrame += 1;
-        this.inventoryGroup.add(this.clone);
+        const group = this.scene.add.group()
+        group.add(this.clone);
         if (this.frames.length > 0 && this.currentCloneFrame < this.frames.length && this.currentCloneFrame >= 0) {
             this.clone.setFrame(this.frames[this.currentCloneFrame]);
             this.clone.setVisible(true)
@@ -81,7 +79,7 @@ class InInventoryState {
         } else {
             this.item.destroy(true)
         }
-        Phaser.Actions.GridAlign(this.inventoryGroup.getChildren(), {
+        Phaser.Actions.GridAlign(group.getChildren(), {
             width: -1,
             cellWidth: this.scene.scale.width * 0.12,
             cellHeight: 32,
@@ -91,36 +89,30 @@ class InInventoryState {
     }
 }
 
-class SolveQuestState {
+/* class SolveQuestState {
     private item!: Phaser.GameObjects.Sprite;
-    private inventoryGroup!: Phaser.GameObjects.Group;
     private itemData!: ItemData;
 
-    constructor(item: Phaser.GameObjects.Sprite, inventoryGroup: Phaser.GameObjects.Group) {
+    constructor(item: Phaser.GameObjects.Sprite) {
         this.item = item;
-        this.inventoryGroup = inventoryGroup;
         this.itemData = item.data.values as ItemData
     }
 
     enter() {
         console.log("solving...")
-        //this.itemData.interactionCondition(this.item.name as TextureKeys)
+        this.itemData.interactionCondition(this.item.name as TextureKeys)
     }
 
-};
+}; */
 
 class QuestCompletedState {
     private item!: Phaser.GameObjects.Sprite;
-    private inventoryGroup!: Phaser.GameObjects.Group;
 
-    constructor(item: Phaser.GameObjects.Sprite, inventoryGroup: Phaser.GameObjects.Group) {
+    constructor(item: Phaser.GameObjects.Sprite) {
         this.item = item;
-        this.inventoryGroup = inventoryGroup;
     }
 
     enter() {
-        const clone = this.inventoryGroup.getMatching("name", this.item.name);
-        clone[0].destroy();
-        this.item.destroy();
+        console.log("solved")
     }
 }

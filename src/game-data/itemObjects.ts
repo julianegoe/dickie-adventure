@@ -35,12 +35,7 @@ const items: Partial<InteractiveItemInterface> =
             frames: [],
             initialFrame: TextureKeys.Tent,
             interactionCondition: function (interactWith:  Phaser.GameObjects.Sprite | InteractiveItem) {
-                if (interactWith.getData("interactable")) {
-                    console.log(`interact Zelt with ${interactWith.name}`)
-                    return true;
-                } else {
-                    return false;
-                }
+                return false
             },
         },
         logs: {

@@ -23,19 +23,6 @@ class DialogueManager {
     }).setOrigin(0).setScrollFactor(0);
   }
 
-  typewriteText(text: string | string[]) {
-    const length = text.length
-    let i = 0
-    this.scene.time.addEvent({
-      callback: () => {
-        this.dialogueText.text += text[i]
-        ++i
-      },
-      repeat: length - 1,
-      delay: 50
-    })
-  }
-
   startDialogue(dialogueId: number) {
     this.scene.scene.pause(SceneKeys.Game)
     const dialogue = this.dialogueData[dialogueId];
@@ -49,8 +36,7 @@ class DialogueManager {
     if (this.currentNode) {
       this.clearDialogue();
       // Display the dialogue text
-      this.typewriteText(this.currentNode.text)
-      //this.dialogueText.setText(this.currentNode.text)
+      this.scene.scene.launch(SceneKeys.DisplayText, { text: this.currentNode.text });
       // Display choices if available
       if (this.currentNode.choices && this.currentNode.choices.length > 0) {
         this.choices = this.currentNode.choices.map((choice, index) => {

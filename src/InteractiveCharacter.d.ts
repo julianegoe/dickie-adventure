@@ -1,7 +1,5 @@
 declare interface IInteractiveCharacter extends Phaser.GameObjects.Sprite
 {
-    talkTo(): void
-    showNameOnHover({ x: number, y: number}): void;
     setNextDialogueNode(node: number): void;
 }
 

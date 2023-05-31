@@ -37,29 +37,29 @@ const characters: Partial<InteractiveCharacterInterface> = {
                 choices: [
                     { text: "Challo, was bist du?", nextNode: 1 },
                     { text: "Weißt du, wo meine Familie ist?", nextNode: 2 },
-                    { text: "Tschüß", nextNode: null }
+                    { text: "Tschüß.", nextNode: null }
                 ]
             },
             {
                 index: 1,
-                text: "Ich bin Polarforscher und besorge mir gerade mein Abendessen",
+                text: "Ich bin Polarforscher und besorge mir gerade mein Abendessen.",
                 choices: [
                     { text: "Darf ich was abhaben?", nextNode: 3 }
                 ]
             },
             {
                 index: 2,
-                text:"Du bist der erste Seehund, der mir in letzter Zeit begegnet ist",
+                text:"Du bist der erste Seehund, der mir in letzter Zeit begegnet ist.",
                 choices: [
                     { text: "Doof.", nextNode: 4 },
-                    { text: "Du auch der erste Polarforscher", nextNode: 5 },
+                    { text: "Du auch der erste Polarforscher.", nextNode: 5 },
                 ]
             },
             {
                 index: 3,
                 text: "Nein.",
                 choices: [
-                    { text: "Bütteeeee", nextNode: 3 },
+                    { text: "Bütteeeee!", nextNode: 3 },
                     { text: "Ok, dann nicht.", nextNode: null }
                 ]
             },
@@ -101,7 +101,7 @@ const characters: Partial<InteractiveCharacterInterface> = {
             },
             {
                 index: 9,
-                text: "Wir können das hier den ganzen Tag machen: Wo ist mein Holz",
+                text: "Wir können das hier den ganzen Tag machen: Wo ist mein Holz?",
                 choices: [
                     { text: "Ich hab in letzter Zeit kein Holz gesehen.", nextNode: 6 },
                     { text: "Vielleicht wurde es ja geklaut.", nextNode: 8 },

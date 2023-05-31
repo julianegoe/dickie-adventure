@@ -54,7 +54,7 @@ export class PreloadScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.addFile(new WebFontFile(this.load, 'VT323'));
+        // this.load.addFile(new WebFontFile(this.load, 'VT323'));
         this.load.image(TextureKeys.Mountains, 'iceworld/mountains.png');
         this.load.image(TextureKeys.Foreground, 'iceworld/foreground.png');
         this.load.image(TextureKeys.Ground, 'iceworld/ground.png');

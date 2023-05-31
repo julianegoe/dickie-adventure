@@ -39,6 +39,6 @@ export default class DisplayText extends Phaser.Scene {
 
     create() {
         this.typewriteText(this.textData);
-        eventsCenter.on("textWritten", () => setTimeout(() => this.scene.stop(SceneKeys.DisplayText), 2000))
+        eventsCenter.on("textWritten", () => setTimeout(() => this.scene.stop(SceneKeys.DisplayText), 1500))
     }
 }

@@ -1,7 +1,10 @@
+import type { TextureKeys } from "@/constants";
+import eventsCenter from "@/events/eventsCenter";
+import type { ItemData } from "@/game-data/itemObjects";
 import type InteractiveItem from "@/objects/InteractiveItem";
 import type { Scene } from "phaser";
 
-type StateNames = "inWorld" | "inInventory" | "questCompleted"
+type StateNames = "inWorld" | "inInventory" | "solveQuest" | "questCompleted"
 
 export default class ItemController {
     private possibleStates!: { [key in StateNames]: { enter: (args?: any) => void } };
@@ -12,6 +15,7 @@ export default class ItemController {
         this.possibleStates = {
             inWorld: new InWorldState(item),
             inInventory: new InInventoryState(item, inventoryGroup, scene, frames),
+            solveQuest: new SolveQuestState(item, inventoryGroup),
             questCompleted: new QuestCompletedState(item, inventoryGroup),
         }
     }
@@ -52,7 +56,13 @@ class InInventoryState {
         this.scene = scene;
         this.frames = frames
         this.currentCloneFrame = this.frames.length;
-        this.clone = this.scene.add.sprite(0, 0, this.item.name).setScrollFactor(0).setOrigin(0).setScale(2).setVisible(false);
+        this.clone = this.scene.add.sprite(0, 0, this.item.name)
+            .setScrollFactor(0)
+            .setOrigin(0)
+            .setScale(2)
+            .setVisible(false)
+            .setInteractive();
+        this.clone.on("pointerdown", () => eventsCenter.emit("interact", this.clone))
 
     }
 
@@ -80,6 +90,24 @@ class InInventoryState {
         });
     }
 }
+
+class SolveQuestState {
+    private item!: Phaser.GameObjects.Sprite;
+    private inventoryGroup!: Phaser.GameObjects.Group;
+    private itemData!: ItemData;
+
+    constructor(item: Phaser.GameObjects.Sprite, inventoryGroup: Phaser.GameObjects.Group) {
+        this.item = item;
+        this.inventoryGroup = inventoryGroup;
+        this.itemData = item.data.values as ItemData
+    }
+
+    enter() {
+        console.log("solving...")
+        //this.itemData.interactionCondition(this.item.name as TextureKeys)
+    }
+
+};
 
 class QuestCompletedState {
     private item!: Phaser.GameObjects.Sprite;

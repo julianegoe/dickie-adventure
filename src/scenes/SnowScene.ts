@@ -16,6 +16,7 @@ export class SnowScene extends Phaser.Scene {
 
     create() {
         const { width, height } = this.scale;
+        this.cameras.main.setSize(this.scale.width, this.scale.height - 100)
         const particles = this.add.particles(0, 100, TextureKeys.Snow, {
             x: 0,
             y: 0,

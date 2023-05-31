@@ -13,9 +13,23 @@ export default class InteractiveCharacter extends Phaser.GameObjects.Sprite {
         super(scene, x, y, texture)
         this.characterData = characters[this.texture.key as CharacterKey] as CharacterData;
         this.setInteractive({ cursor: 'url(speak.cur), pointer' });
+        const text = this.scene.add.text(this.x + this.width, this.y, this.characterData.name, {
+            fontFamily: "'Press Start 2P'",
+            color: "#000000",
+            fontSize: "14px",
+            backgroundColor: "#fff",
+            wordWrap: { width: this.scene.scale.width - 50, useAdvancedWrap: true }
+        }).setScrollFactor(0.9).setOrigin(0.5).setVisible(false)
+        this.on('pointerover', () => {
+            text.setVisible(true);
+        });
+        this.on('pointerout', () => {
+            text.setVisible(false);
+        })
+        this.talkTo()
     }
 
-    public talkTo() {
+    private talkTo() {
         this.on('pointerup', () => {
             this.scene.scene.pause(SceneKeys.Game);
             this.scene.scene.launch(SceneKeys.Dialogue, { characterData: this.characterData, startNode: this.dialogueNode});
@@ -24,20 +38,6 @@ export default class InteractiveCharacter extends Phaser.GameObjects.Sprite {
 
     public setNextDialogueNode(node: number) {
         this.dialogueNode = node;
-    }
-
-    public showNameOnHover(position: { x: number, y: number}) {
-        const text = this.scene.add.text(position.x + 100, position.y, this.characterData.name, {
-            fontFamily: "'Press Start 2P'",
-            color: "#000000",
-            fontSize: "14px"
-        }).setScrollFactor(0).setVisible(false);
-        this.on('pointerover', (pointer: {x: number, y: number}) => {
-            text.setVisible(true).setOrigin(0).setPosition(pointer.x, pointer.y)
-        })
-        this.on('pointerout', () => {
-            text.setVisible(false)
-        })
     }
 }
 Phaser.GameObjects.GameObjectFactory.register(

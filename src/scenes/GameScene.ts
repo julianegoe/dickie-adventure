@@ -176,7 +176,7 @@ export class GameScene extends Phaser.Scene {
 
         // Game Objects Events
         this.tent.on("interact", (itemData: ItemData, pointer: Phaser.Math.Vector2) => {
-            this.scene.launch(SceneKeys.InteractionMenu, { location: pointer, itemData, itemController: null})
+            this.scene.launch(SceneKeys.InteractionMenu, { location: pointer, itemData, itemController: null});
         })
 
         this.logs.on("interact", (itemData: ItemData, pointer: Phaser.Math.Vector2) => {
@@ -192,10 +192,10 @@ export class GameScene extends Phaser.Scene {
             if (itemData.removeable) {
                 itemController.setState("inInventory");
             }
+        });
+        eventsCenter.on("interact", (item: Phaser.GameObjects.Sprite) => {
+            item.alpha === 1 ? item.setAlpha(0.7) : item.setAlpha(1)
         })
-
-        this.explorer.showNameOnHover({ x: this.explorer.x, y: this.explorer.y - 100 });
-        this.explorer.talkTo()
 
         this.scene.launch(SceneKeys.Snowfall, {
             player: this.player,
@@ -215,7 +215,7 @@ export class GameScene extends Phaser.Scene {
             this.player.anims.play('left', true);
         }
         else if (this.cursors?.right.isDown) {
-            this.velocityX += 2.5;
+            this.velocityX += 5.5;
 
             this.player.anims.play('right', true);
         } else {

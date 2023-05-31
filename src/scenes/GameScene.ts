@@ -5,6 +5,7 @@ import ItemController from "@/state-machines/ItemStateMachine";
 import QuestController, { Quest } from "@/state-machines/QuestStateMachine";
 import { quests } from "@/game-data/questData";
 import eventsCenter from "@/events/eventsCenter";
+import type { ItemData } from "@/game-data/itemObjects";
 
 export class GameScene extends Phaser.Scene {
     private cursors!: Phaser.Types.Input.Keyboard.CursorKeys | undefined;
@@ -144,13 +145,11 @@ export class GameScene extends Phaser.Scene {
         this.tent = new InteractiveItem(this, 2870, this.gameHeight - 310, TextureKeys.Tent)
             .setOrigin(0.5)
             .setScale(3)
-            .setScrollFactor(0.9)
         this.add.existing(this.tent);
 
         this.logs = new InteractiveItem(this, 2970, this.gameHeight - 250, TextureKeys.Logs, FrameKeys.LogQuant3)
             .setOrigin(0)
             .setScale(1.8)
-            .setScrollFactor(0.9)
         this.add.existing(this.logs);
         const logController = new ItemController(this.logs, inventoryGroup, this)
 
@@ -176,14 +175,24 @@ export class GameScene extends Phaser.Scene {
         })
 
         // Game Objects Events
-        this.tent.shineOnHover();
-        this.tent.onInteract((location, itemData) => {
-            this.scene.launch(SceneKeys.InteractionMenu, { location, itemData })
+        this.tent.on("interact", (itemData: ItemData, pointer: Phaser.Math.Vector2) => {
+            this.scene.launch(SceneKeys.InteractionMenu, { location: pointer, itemData, itemController: null})
+        })
+
+        this.logs.on("interact", (itemData: ItemData, pointer: Phaser.Math.Vector2) => {
+            this.scene.launch(SceneKeys.InteractionMenu, { location: pointer, itemData, itemController: logController})
+        })
+
+        // Global Events
+        eventsCenter.on("lookAtItem", (itemData: ItemData, itemController: ItemController) => {
+            this.scene.launch(SceneKeys.DisplayText, { text: itemData.lookAtText })
         });
-        this.logs.shineOnHover();
-        this.logs.onInteract((location, itemData) => {
-            this.scene.launch(SceneKeys.InteractionMenu, { location, itemData, itemController: logController})
-        });
+        eventsCenter.on("takeItem", (itemData: ItemData, itemController: ItemController) => {
+            this.scene.launch(SceneKeys.DisplayText, { text: itemData.takeText });
+            if (itemData.removeable) {
+                itemController.setState("inInventory");
+            }
+        })
 
         this.explorer.showNameOnHover({ x: this.explorer.x, y: this.explorer.y - 100 });
         this.explorer.talkTo()
@@ -206,7 +215,7 @@ export class GameScene extends Phaser.Scene {
             this.player.anims.play('left', true);
         }
         else if (this.cursors?.right.isDown) {
-            this.velocityX += 4.5;
+            this.velocityX += 2.5;
 
             this.player.anims.play('right', true);
         } else {

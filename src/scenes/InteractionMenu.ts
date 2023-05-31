@@ -2,6 +2,7 @@ import { SceneKeys, TextureKeys } from "@/constants";
 import Sprite = Phaser.GameObjects.Sprite;
 import type { ItemData } from "@/game-data/itemObjects";
 import type ItemController from "@/state-machines/ItemStateMachine";
+import eventsCenter from "@/events/eventsCenter";
 
 export default class InteractionMenu extends Phaser.Scene {
     private location!: { x: number, y: number };
@@ -9,51 +10,25 @@ export default class InteractionMenu extends Phaser.Scene {
     private menuRectangle!: Sprite;
     private lookAt!: Sprite;
     private take!: Sprite;
-    private displayText!: Phaser.GameObjects.Text
     private itemController!: ItemController;
 
     constructor() {
         super({ key: SceneKeys.InteractionMenu });
     }
 
-    init(data: { location: { x: number, y: number }, itemData: ItemData, itemController: ItemController }) {
+    init(data: { location: { x: number, y: number }, itemData: ItemData, itemController: ItemController}) {
         this.location = data.location;
         this.itemData = data.itemData;
-        this.displayText = this.add.text(50, 50, "", {
-            fontFamily: "'Press Start 2P'",
-            fontSize: "16px",
-            color: "#000",
-            backgroundColor: "#fff"
-        }).setOrigin(0);
         this.itemController = data.itemController;
     }
-    
-    typewriteText(text: string | string[]) {
-        const length = text.length
-        let i = 0
-        this.time.addEvent({
-          callback: () => {
-            this.displayText.text += text[i]
-            ++i
-          },
-          repeat: length - 1,
-          delay: 50
-        })
-      }
+
 
     lookAtItem() {
-        this.displayText.setText("")
-        if (this.itemData.interactable) {
-            this.typewriteText(this.itemData.lookAtText)
-        }
+        eventsCenter.emit("lookAtItem", this.itemData, this.itemController);
     }
 
     takeItem() {
-        this.displayText.setText("");
-        this.typewriteText(this.itemData.takeText)
-        if (this.itemData.removeable) {
-            this.itemController.setState("inInventory");
-        }
+        eventsCenter.emit("takeItem", this.itemData, this.itemController);
 
     }
 

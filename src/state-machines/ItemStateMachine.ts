@@ -1,5 +1,6 @@
 import eventsCenter from "@/events/eventsCenter";
 import type InteractiveItem from "@/objects/InteractiveItem";
+import { useGameObjectStore } from "@/stores/gameObjects";
 import type { Scene } from "phaser";
 
 type StateNames = "inWorld" | "inInventory" | "questCompleted"
@@ -45,6 +46,7 @@ class InInventoryState {
     private currentCloneFrame!: number;
     private currentItemFrame: number = 0;
     private clone!: Phaser.GameObjects.Sprite;
+    private store!: any;
 
     constructor(item: Phaser.GameObjects.Sprite, scene: Scene, frames: string[]) {
         this.item = item;
@@ -56,18 +58,19 @@ class InInventoryState {
             .setOrigin(0)
             .setScale(2)
             .setVisible(false)
-            .setInteractive()
+            .setInteractive({ draggable: true})
             .setData(this.item.data.values)
             .setName(this.item.name);
         this.clone.on("pointerdown", () => eventsCenter.emit("interactInInventory", this.clone))
-
+        this.store = useGameObjectStore();
     }
 
     enter() {
         this.currentCloneFrame -= 1;
         this.currentItemFrame += 1;
-        const group = this.scene.add.group()
-        group.add(this.clone);
+        this.store.initGroup(this.scene);
+        this.store.addToGroup(this.clone);
+        const currentGroup = this.store.getInventoryGroup();
         if (this.frames.length > 0 && this.currentCloneFrame < this.frames.length && this.currentCloneFrame >= 0) {
             this.clone.setFrame(this.frames[this.currentCloneFrame]);
             this.clone.setVisible(true)
@@ -79,7 +82,7 @@ class InInventoryState {
         } else {
             this.item.destroy(true)
         }
-        Phaser.Actions.GridAlign(group.getChildren(), {
+        Phaser.Actions.GridAlign(currentGroup.getChildren(), {
             width: -1,
             cellWidth: this.scene.scale.width * 0.12,
             cellHeight: 32,

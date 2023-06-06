@@ -1,41 +1,45 @@
-import { SceneKeys } from "@/constants";
-import type InteractiveItem from "@/objects/InteractiveItem";
+import { SceneKeys, TextureKeys } from "@/constants";
+import { items, type InteractiveItemInterface } from "@/game-data/itemObjects";
+import { useGameObjectStore } from "@/stores/gameObjects";
 import type { Scene } from "phaser";
 
 export class InteractionManager {
     private scene!: Scene;
-    public useItem: Phaser.GameObjects.Sprite | InteractiveItem | null = null;
+    private store!: any;
 
     constructor(scene: Scene) {
         this.scene = scene;
-      }
+        this.store = useGameObjectStore(); 
+    }
 
-    public useWith(item: Phaser.GameObjects.Sprite | InteractiveItem) {
-        if (this.useItem && item.name !== this.useItem.name) {
-            const testCondition: (gameObject: Phaser.GameObjects.Sprite | InteractiveItem) => boolean = item.getData("interactionCondition");
-            const isSolved: boolean = testCondition(this.useItem)
-            if (isSolved) {
-                this.scene.scene.launch(SceneKeys.DisplayText, { text: "Das passt", autoDelete: true})
-            } else {
-                this.scene.scene.launch(SceneKeys.DisplayText, { text: "Das passt nicht.", autoDelete: true})
+    public useWith(inventoryItem: Phaser.GameObjects.Sprite, worldItemName: TextureKeys) {
+        if (inventoryItem && worldItemName !== inventoryItem.name) {
+            const condition = items[worldItemName]?.interactionCondition;
+            const worldItem: Phaser.GameObjects.Sprite = this.store.getObject(worldItemName)
+            if (condition && worldItem) {
+                const isSolved: boolean = condition(inventoryItem, worldItem)
+                if (isSolved) {
+                    inventoryItem.destroy(true);
+                    this.scene.scene.launch(SceneKeys.DisplayText, { text: worldItem.getData("successText"), autoDelete: true })
+                } else {
+                    const group: Phaser.GameObjects.Group = this.store.getInventoryGroup();
+                    Phaser.Actions.GridAlign(group.getChildren(), {
+                        width: -1,
+                        cellWidth: 900 * 0.12,
+                        cellHeight: 32,
+                        x: 12,
+                        y: 580 - 82,
+                    });
+                    this.scene.scene.launch(SceneKeys.DisplayText, { text: worldItem.getData("failureText"), autoDelete: true })
+                }
+                this.resetItem(inventoryItem);
             }
-            this.resetItem();
         } else {
-            this.resetItem();
+            this.resetItem(inventoryItem);
         }
     }
 
-    public setItem(item: Phaser.GameObjects.Sprite | InteractiveItem) {
-        if (!this.useItem) {
-            this.useItem = item;
-        } else if (this.useItem && this.useItem.name === item.name) {
-            console.log("item already set")
-            this.resetItem();
-        }
-    };
-
-    private resetItem() {
-        this.useItem?.setAlpha(1)
-        this.useItem = null;
+    private resetItem(inventoryItem: Phaser.GameObjects.Sprite) {
+        inventoryItem?.setAlpha(1)
     }
 }

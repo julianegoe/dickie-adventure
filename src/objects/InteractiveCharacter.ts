@@ -19,7 +19,7 @@ export default class InteractiveCharacter extends Phaser.GameObjects.Sprite {
             fontSize: "14px",
             backgroundColor: "#fff",
             wordWrap: { width: this.scene.scale.width - 50, useAdvancedWrap: true }
-        }).setScrollFactor(0.9).setOrigin(0.5).setVisible(false)
+        }).setScrollFactor(1).setOrigin(0.5).setVisible(false)
         this.on('pointerover', () => {
             text.setVisible(true);
         });

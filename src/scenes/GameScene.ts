@@ -33,6 +33,7 @@ export class GameScene extends Phaser.Scene {
         return this.add.sprite(100, this.gameHeight - 220, TextureKeys.DickieMove)
             .setOrigin(0)
             .setScale(2)
+            .setDepth(10)
     }
 
     createNpc() {
@@ -145,25 +146,27 @@ export class GameScene extends Phaser.Scene {
             
         const inventoryGroup = this.add.group();
 
-        this.tent = new InteractiveItem(this, 2870, this.gameHeight - 310, TextureKeys.Tent)
-            .setOrigin(0.5)
+        this.tent = new InteractiveItem(this, 2770, this.gameHeight - 410, TextureKeys.Tent)
+            .setOrigin(0)
             .setScale(3)
         this.add.existing(this.tent);
+        this.tent.createDropZone(TextureKeys.Tent, 3)
 
-        this.logs = new InteractiveItem(this, 2970, this.gameHeight - 250, TextureKeys.Logs, FrameKeys.LogQuant3)
+        this.logs = new InteractiveItem(this, 3050, this.gameHeight - 250, TextureKeys.Logs, FrameKeys.LogQuant3)
             .setOrigin(0)
             .setScale(1.5)
         this.add.existing(this.logs);
 
-        this.bonfire = new InteractiveItem(this, 3100, this.gameHeight - 320, TextureKeys.Bonfire, FrameKeys.Bonfire1)
+        this.bonfire = new InteractiveItem(this, 3150, this.gameHeight - 320, TextureKeys.Bonfire, FrameKeys.Bonfire1)
             .setOrigin(0)
             .setScale(1.5)
         this.add.existing(this.bonfire);
+        this.bonfire.createDropZone(TextureKeys.Bonfire, 1.5)
 
         this.explorer = this.add.interactiveCharacter(2500, this.gameHeight - 390, CharacterKey.Explorer)
             .setOrigin(0)
             .setScale(2)
-            .setScrollFactor(0.9)
+            .setScrollFactor(1)
         this.explorer.anims.play('explorer_wind');
         this.createBribeQuest(this.explorer);
 
@@ -194,18 +197,35 @@ export class GameScene extends Phaser.Scene {
         });
 
         eventsCenter.on("interactInWorld", (item: InteractiveItem, pointer: Phaser.Math.Vector2) => {
-            this.interactionManager.useWith(item);
             this.scene.launch(SceneKeys.InteractionMenu, { item, pointer })
-        })
-
-        eventsCenter.on("interactInInventory", (item: Phaser.GameObjects.Sprite) => {
-            item.alpha === 1 ? item.setAlpha(0.7) : item.setAlpha(1);
-            this.interactionManager.setItem(item);
         })
 
         this.scene.launch(SceneKeys.Snowfall, {
             player: this.player,
+        });
+
+        this.input.on("dragstart", (pointer: any, gameObject: any) => {
+            gameObject.setAlpha(0.7)
         })
+
+        this.input.on("drag", (pointer: any, gameObject: Phaser.GameObjects.Sprite, dragX: number, dragY: number) => {
+            gameObject.x = dragX,
+            gameObject.y = dragY
+        })
+
+        this.input.on("dragend", (pointer: any, gameObject: Phaser.GameObjects.Sprite) => {
+            gameObject.setAlpha(1);
+        });
+
+        this.input.on('drop', (pointer: Phaser.Math.Vector2, gameObject: Phaser.GameObjects.Sprite, dropZone: Phaser.GameObjects.Zone) =>
+        {
+            console.log(gameObject.name + " dropped into " + dropZone.name)
+            this.interactionManager.useWith(gameObject, dropZone.name as TextureKeys)
+
+            //gameObject.input.enabled = false;
+            console.log(gameObject.visible)
+
+        });
 
         // Quest Triggers
         eventsCenter.once("logsStolen", () => this.bribeQuest.controller.setState("unlocked"))

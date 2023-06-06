@@ -1,5 +1,6 @@
 import { SceneKeys, TextureKeys } from "@/constants";
 import { items, type InteractiveItemInterface } from "@/game-data/itemObjects";
+import type InteractiveItem from "@/objects/InteractiveItem";
 import { useGameObjectStore } from "@/stores/gameObjects";
 import type { Scene } from "phaser";
 
@@ -15,12 +16,13 @@ export class InteractionManager {
     public useWith(inventoryItem: Phaser.GameObjects.Sprite, worldItemName: TextureKeys) {
         if (inventoryItem && worldItemName !== inventoryItem.name) {
             const condition = items[worldItemName]?.interactionCondition;
-            const worldItem: Phaser.GameObjects.Sprite = this.store.getObject(worldItemName)
+            const worldItem: InteractiveItem = this.store.getObject(worldItemName)
             if (condition && worldItem) {
                 const isSolved: boolean = condition(inventoryItem, worldItem)
                 if (isSolved) {
                     inventoryItem.destroy(true);
-                    this.scene.scene.launch(SceneKeys.DisplayText, { text: worldItem.getData("successText"), autoDelete: true })
+                    this.scene.scene.launch(SceneKeys.DisplayText, { text: worldItem.getData("successText"), autoDelete: true });
+                    worldItem.controller.setState("questCompleted");
                 } else {
                     const group: Phaser.GameObjects.Group = this.store.getInventoryGroup();
                     Phaser.Actions.GridAlign(group.getChildren(), {

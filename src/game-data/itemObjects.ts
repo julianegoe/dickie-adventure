@@ -1,7 +1,10 @@
-import { FrameKeys, SceneKeys, TextureKeys } from "@/constants";
-import type InteractiveItem from "@/objects/InteractiveItem";
+import { FrameKeys, QuestKeys, TextureKeys } from "@/constants";
+import { useGameObjectStore } from "@/stores/gameObjects";
 
 const DEFAULT_TAKE_TEXT = "Das kann ich nicht mitnehmen"
+const DEFAULT_FAILURE_TEXT = "Das kann ich damit nicht benutzen."
+
+const store = useGameObjectStore()
 
 export interface ItemData {
     id: number;
@@ -37,7 +40,7 @@ let items: Partial<InteractiveItemInterface> =
         frames: [],
         initialFrame: TextureKeys.Tent,
         successText: "Es ist offen.", 
-        failureText: "Das kann ich damit nicht benutzen.",
+        failureText: DEFAULT_FAILURE_TEXT,
         interactionCondition: function (inventoryItem: Phaser.GameObjects.Sprite, worldItem: Phaser.GameObjects.Sprite) {
             return false
         },
@@ -80,7 +83,11 @@ let items: Partial<InteractiveItemInterface> =
             if (inventoryItem.name === TextureKeys.Logs && worldItem.frame.name !== FrameKeys.Bonfire2 && inventoryItem.frame.name === FrameKeys.LogQuant3) {
                 console.log(`interact ${inventoryItem.name} with ${worldItem.name}`);
                 worldItem.setFrame(FrameKeys.Bonfire2);
-                worldItem.setData("lookAtText", "Brennt.")
+                worldItem.setData("lookAtText", "Brennt.");
+                const bribeQuest = store.getQuest(QuestKeys.TheBribe);
+                console.log(bribeQuest);
+                bribeQuest.controller.setState("unlockedNextStage");
+                bribeQuest.controller.setState("completed")
                 return true
             }
             return false

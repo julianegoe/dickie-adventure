@@ -1,16 +1,28 @@
 import {ref} from 'vue'
 import {defineStore} from 'pinia'
-import type { TextureKeys } from '@/constants';
+import type { QuestKeys, TextureKeys } from '@/constants';
 import type { Scene } from 'phaser';
+import type { Quest } from '@/state-machines/QuestStateMachine';
 
 
 export const useGameObjectStore = defineStore('gameObjects', () => {
     const gameObjects = ref(new Map());
 
-    const inventoryGroup = ref<Phaser.GameObjects.Group>()
+    const inventoryGroup = ref<Phaser.GameObjects.Group>();
+
+    const quests = ref(new Map())
 
     const setObject = (key: TextureKeys, gameObject: Phaser.GameObjects.GameObject) => {
         gameObjects.value.set(key, gameObject)
+    };
+
+
+    const getQuest = (key: QuestKeys ): Quest => {
+        return quests.value.get(key)
+    }
+
+    const setQuest = (key: QuestKeys, quest: Quest) => {
+        quests.value.set(key, quest)
     };
 
 
@@ -30,5 +42,5 @@ export const useGameObjectStore = defineStore('gameObjects', () => {
         return inventoryGroup.value
     }
 
-    return {gameObjects, setObject, getObject, initGroup, addToGroup, getInventoryGroup}
+    return {gameObjects, setObject, getObject, initGroup, addToGroup, getInventoryGroup, getQuest, setQuest}
 })

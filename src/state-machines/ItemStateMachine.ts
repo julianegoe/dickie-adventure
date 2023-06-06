@@ -92,22 +92,6 @@ class InInventoryState {
     }
 }
 
-/* class SolveQuestState {
-    private item!: Phaser.GameObjects.Sprite;
-    private itemData!: ItemData;
-
-    constructor(item: Phaser.GameObjects.Sprite) {
-        this.item = item;
-        this.itemData = item.data.values as ItemData
-    }
-
-    enter() {
-        console.log("solving...")
-        this.itemData.interactionCondition(this.item.name as TextureKeys)
-    }
-
-}; */
-
 class QuestCompletedState {
     private item!: Phaser.GameObjects.Sprite;
 

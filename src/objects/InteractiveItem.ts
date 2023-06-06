@@ -13,6 +13,7 @@ export default class InteractiveItem extends Phaser.GameObjects.Sprite {
 
     constructor(scene: Scene, x: number, y: number, texture: string, frame?: string | number) {
         super(scene, x, y, texture, frame)
+        this.setOrigin(0);
         this.setInteractive({ cursor: 'url(interact.cur), pointer' });
         this.setScrollFactor(1);
         this.setData(items[this.texture.key as TextureKeys] as ItemData);
@@ -24,13 +25,13 @@ export default class InteractiveItem extends Phaser.GameObjects.Sprite {
             eventsCenter.emit("interactInWorld", this, pointer);
         });
         let fx!: Phaser.FX.Shine;
-        const text = this.scene.add.text(this.x - this.width, this.y - this.height - 10, this.itemData.name, {
+        const text = this.scene.add.text(this.x + (this.width / 2), this.y - 50, this.itemData.name, {
             fontFamily: "'Press Start 2P'",
             color: "#000000",
             fontSize: "14px",
             backgroundColor: "#fff",
             wordWrap: { width: this.scene.scale.width - 50, useAdvancedWrap: true }
-        }).setScrollFactor(0.9).setOrigin(0).setVisible(false)
+        }).setScrollFactor(1).setOrigin(0).setVisible(false).setDepth(1)
         this.on('pointerover', () => {
             fx = this.postFX.addShine(0.7, .2, 5);
             text.setVisible(true);
@@ -60,9 +61,9 @@ export default class InteractiveItem extends Phaser.GameObjects.Sprite {
             .setScrollFactor(1)
             .setScale(scaleFactor)
             .setDepth(0);
-            const graphics = this.scene.add.graphics();
-            graphics.lineStyle(2, 0xffff00);
-            graphics.strokeRect(zone.x, zone.y, zone.width * scaleFactor, zone.height * scaleFactor)
+            //const graphics = this.scene.add.graphics();
+            //graphics.lineStyle(2, 0xffff00);
+            //graphics.strokeRect(zone.x, zone.y, zone.width * scaleFactor, zone.height * scaleFactor)
     }
 }
 Phaser.GameObjects.GameObjectFactory.register(

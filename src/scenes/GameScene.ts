@@ -146,8 +146,7 @@ export class GameScene extends Phaser.Scene {
             
         const inventoryGroup = this.add.group();
 
-        this.tent = new InteractiveItem(this, 2770, this.gameHeight - 410, TextureKeys.Tent)
-            .setOrigin(0)
+        this.tent = new InteractiveItem(this, 2770, this.gameHeight - 360, TextureKeys.Tent)
             .setScale(3)
         this.add.existing(this.tent);
         this.tent.createDropZone(TextureKeys.Tent, 3)
@@ -219,12 +218,7 @@ export class GameScene extends Phaser.Scene {
 
         this.input.on('drop', (pointer: Phaser.Math.Vector2, gameObject: Phaser.GameObjects.Sprite, dropZone: Phaser.GameObjects.Zone) =>
         {
-            console.log(gameObject.name + " dropped into " + dropZone.name)
             this.interactionManager.useWith(gameObject, dropZone.name as TextureKeys)
-
-            //gameObject.input.enabled = false;
-            console.log(gameObject.visible)
-
         });
 
         // Quest Triggers

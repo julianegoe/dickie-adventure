@@ -16,6 +16,7 @@ export interface CharacterData {
     name: string;
     altName: string;
     interactable: boolean;
+    currentDialogueNode: number;
     dialogue: IDialogue[]
 }
 
@@ -30,6 +31,7 @@ const characters: Partial<InteractiveCharacterInterface> = {
         name: "Angel-Mensch",
         altName: "Forscher",
         interactable: true,
+        currentDialogueNode: 0,
         dialogue: [
             {
                 index: 0,
@@ -112,7 +114,23 @@ const characters: Partial<InteractiveCharacterInterface> = {
                 index: 10,
                 text: "Hab ich eine Wahl?",
                 choices: [
-                    { text: "Nein.", nextNode: 4 },
+                    { text: "Nein.", nextNode: 11 },
+                ]
+            },
+            {
+                index: 11,
+                text: "Ich hab keine Ahnung, wo andere Seehunde sind. Aber sieh dich in meinem Zelt um und nimm dir, was du zur Suche brauchst.",
+                choices: [
+                    { text: "Geht doch.", nextNode: 4 },
+                    { text: "Danke.", nextNode: 4 },
+                    { text: "Ich wüsste nicht, was mit aus einem Menschenzelt helfen könnte.", nextNode: 4 },
+                ]
+            },
+            {
+                index: 12,
+                text: "Danke fürs Feuermachen. Bist okay.",
+                choices: [
+                    { text: "Hilfst du mir?", nextNode: 11 },
                 ]
             },
         ],

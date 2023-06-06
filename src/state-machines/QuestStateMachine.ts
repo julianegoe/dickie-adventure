@@ -1,13 +1,15 @@
 import type { QuestData } from "@/game-data/questData";
+import { useGameObjectStore } from "@/stores/gameObjects";
 import type { Scene } from "phaser";
 
-type StateNames = "locked" | "unlocked" | "solve" | "completed"
+type StateNames = "locked" | "unlocked" | "unlockedNextStage" | "solve" | "completed"
 
 export class Quest {
     public questData!: QuestData;
     private gameObject!: Phaser.GameObjects.Sprite;
     private scene!: Scene;
     public controller!: QuestController;
+    private store!: any;
 
     constructor(questData: QuestData, gameObject?: Phaser.GameObjects.Sprite, scene?: Scene) {
         this.questData = questData;
@@ -18,11 +20,17 @@ export class Quest {
             this.scene = scene;
         }
         this.controller = new QuestController(this);
+        this.store = useGameObjectStore();
+        this.store.setQuest(this.questData.key, this);
     }
 
     startQuest() {
         console.log("Quest started: ", this.questData.name);
         this.questData.changes(this.gameObject);
+    }
+
+    startNextStage() {
+        this.questData.changesNextStage(this.gameObject);
     }
 
     testConditions() {
@@ -40,6 +48,7 @@ export default class QuestController {
         this.possibleStates = {
             locked: new LockedQuest(quest),
             unlocked: new UnlockedQuest(quest),
+            unlockedNextStage: new UnlockedNextStageQuest(quest),
             solve: new SolveQuest(quest),
             completed: new CompletedQuest(quest),
         }
@@ -78,6 +87,17 @@ class UnlockedQuest {
     enter() {
         console.log("Quest unlocked: ", this.quest.questData.name)
         this.quest.startQuest()
+    }
+}
+
+class UnlockedNextStageQuest {
+    private quest!: Quest;
+    constructor(quest: Quest) {
+        this.quest = quest;
+    }
+
+    enter() {
+        this.quest.startNextStage()
     }
 }
 

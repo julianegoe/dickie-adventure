@@ -36,8 +36,9 @@ export default class InteractiveCharacter extends Phaser.GameObjects.Sprite {
         });
     }
 
-    public setNextDialogueNode(node: number) {
-        this.dialogueNode = node;
+    public setNextDialogueNode(nodeIndex: number) {
+        this.dialogueNode = nodeIndex;
+        this.setData("currentDialogueNode", nodeIndex);
     }
 }
 Phaser.GameObjects.GameObjectFactory.register(

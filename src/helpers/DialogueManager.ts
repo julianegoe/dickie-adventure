@@ -1,18 +1,22 @@
 import { SceneKeys, TextureKeys } from "@/constants";
 import type { Choice, IDialogue } from "@/game-data/characters";
+import type Dialogue from "@/scenes/Dialogue";
+import type { GameScene } from "@/scenes/GameScene";
 import type { Scene } from "phaser";
 
 class DialogueManager {
-  private scene!: Scene;
+  private scene!: Dialogue;
+  private gameScene!: GameScene;
   private dialogueData: IDialogue[] = [];
   private currentNode!: IDialogue;
   private choices!: Phaser.GameObjects.Text[] | null;
   private dialogueGraphics!: Phaser.GameObjects.Graphics | null;
 
-  constructor(scene: Scene, dialogueData: IDialogue[]) {
+  constructor(scene: Dialogue, dialogueData: IDialogue[]) {
     this.scene = scene;
     this.dialogueData = dialogueData;
     this.currentNode = this.dialogueData[0];
+    this.gameScene = this.scene.scene.get(SceneKeys.Game) as GameScene;
   }
 
   startDialogue(dialogueId: number) {
@@ -48,6 +52,10 @@ class DialogueManager {
           // Add pointer event to the choice text
           choiceText.setInteractive({ cursor: 'pointer' }).on('pointerdown', () => {
             this.handleChoiceSelection(choice);
+            if (choice.unlockQuest) {
+              
+              this.gameScene[choice.unlockQuest].controller.setState("unlocked")
+            }
           });
           return choiceText;
         });

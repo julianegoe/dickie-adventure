@@ -1,20 +1,24 @@
 import eventsCenter from "@/events/eventsCenter";
 import type InteractiveItem from "@/objects/InteractiveItem";
+import type { PortalItem } from "@/objects/PortalItem";
+import type { GameScene } from "@/scenes/GameScene";
 import { useGameObjectStore } from "@/stores/gameObjects";
 import type { Scene } from "phaser";
 
-type StateNames = "inWorld" | "inInventory" | "questCompleted"
+type StateNames = "inWorld" | "inInventory" | "questCompleted" | "locked" | "unlocked"
 
 export default class ItemController {
     private possibleStates!: { [key in StateNames]: { enter: (args?: any) => void } };
     private currentState!: { enter: () => void };
 
-    constructor(item: InteractiveItem, scene: Scene) {
+    constructor(item: InteractiveItem | PortalItem, scene: GameScene) {
         const frames = item.getData("frames") as string[];
         this.possibleStates = {
             inWorld: new InWorldState(item),
-            inInventory: new InInventoryState(item, scene, frames),
+            inInventory: new InInventoryState(item, scene, frames, scene.inventoryGroup),
             questCompleted: new QuestCompletedState(item),
+            locked: new LockedState(item as PortalItem),
+            unlocked: new UnlockedState(item as PortalItem),
         }
     }
 
@@ -47,8 +51,9 @@ class InInventoryState {
     private currentItemFrame: number = 0;
     private clone!: Phaser.GameObjects.Sprite;
     private store!: any;
+    private group!: Phaser.GameObjects.Group;
 
-    constructor(item: Phaser.GameObjects.Sprite, scene: Scene, frames: string[]) {
+    constructor(item: Phaser.GameObjects.Sprite, scene: Scene, frames: string[], group: Phaser.GameObjects.Group) {
         this.item = item;
         this.scene = scene;
         this.frames = frames
@@ -63,14 +68,15 @@ class InInventoryState {
             .setName(this.item.name);
         this.clone.on("pointerdown", () => eventsCenter.emit("interactInInventory", this.clone))
         this.store = useGameObjectStore();
+        this.group = group;
     }
 
     enter() {
         this.currentCloneFrame -= 1;
         this.currentItemFrame += 1;
-        this.store.initGroup(this.scene);
-        this.store.addToGroup(this.clone);
-        const currentGroup = this.store.getInventoryGroup();
+        
+
+        this.group.add(this.clone)
         if (this.frames.length > 0 && this.currentCloneFrame < this.frames.length && this.currentCloneFrame >= 0) {
             this.clone.setFrame(this.frames[this.currentCloneFrame]);
             this.clone.setVisible(true)
@@ -82,7 +88,7 @@ class InInventoryState {
         } else {
             this.item.destroy(true)
         }
-        Phaser.Actions.GridAlign(currentGroup.getChildren(), {
+        Phaser.Actions.GridAlign(this.group.getChildren(), {
             width: -1,
             cellWidth: this.scene.scale.width * 0.12,
             cellHeight: 32,
@@ -101,5 +107,29 @@ class QuestCompletedState {
 
     enter() {
         console.log("solved")
+    }
+}
+
+class LockedState {
+    private item!: PortalItem;
+
+    constructor(item: PortalItem) {
+        this.item = item;
+    }
+
+    enter() {
+        console.log("locked")
+    }
+}
+
+class UnlockedState {
+    private item!: PortalItem;
+
+    constructor(item: PortalItem) {
+        this.item = item;
+    }
+
+    enter() {
+        this.item.isUnlocked = true
     }
 }

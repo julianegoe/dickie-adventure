@@ -2,6 +2,7 @@ import type { TextureKeys } from '@/constants';
 import eventsCenter from '@/events/eventsCenter';
 import type { ItemData } from '@/game-data/itemObjects';
 import { items } from '@/game-data/itemObjects';
+import type { GameScene } from '@/scenes/GameScene';
 import ItemController from '@/state-machines/ItemStateMachine';
 import { useGameObjectStore } from '@/stores/gameObjects';
 import Phaser, { Scene } from 'phaser'
@@ -45,12 +46,11 @@ export default class InteractiveItem extends Phaser.GameObjects.Sprite {
     }
 
     private createController() {
-        this.controller = new ItemController(this, this.scene)
+        this.controller = new ItemController(this, this.scene as GameScene)
     }
 
     private gameObjectStore (texture: TextureKeys) {
         const store = useGameObjectStore();
-        store.setObject(texture, this)
     }
 
     public createDropZone(texture: TextureKeys, scaleFactor: number) {

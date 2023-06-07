@@ -40,6 +40,7 @@ enum SceneKeys {
     Dialogue = 'Dialogue',
     Snowfall = 'Snowfall',
     DisplayText = 'DisplayText',
+    TentScene = "TentScene",
 }
 
 enum AnimationKeys {
@@ -64,6 +65,7 @@ enum FrameKeys {
 
 enum QuestKeys {
     TheBribe = 'theBribe',
+    SearchTent = 'searchTent',
 }
 
 export {

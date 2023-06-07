@@ -1,5 +1,6 @@
 import { QuestKeys } from "@/constants";
 import type InteractiveCharacter from "@/objects/InteractiveCharacter";
+import type { PortalItem } from "@/objects/PortalItem";
 import type { Quest } from "@/state-machines/QuestStateMachine";
 import { useGameObjectStore } from "@/stores/gameObjects";
 
@@ -29,8 +30,20 @@ export const quests: QuestInterface = {
             explorer.setData("nextDialogueNode", 12)
         },
         conditions: (bribeQuest: Quest) => {
-            
+
         },
         hint: "Vielleicht lockert das seine Zunge. Chöchöchö.",
-    }
-}
+    },
+    searchTent: {
+        name: "Search The Tent",
+        key: QuestKeys.SearchTent,
+        changes: (tent: PortalItem) => {
+            tent.controller.setState("unlocked")
+        },
+        changesNextStage: () => { console.log("next stage tent") },
+        conditions: (tentQuest: Quest) => {
+            return true;
+        },
+        hint: "Something",
+    },
+};

@@ -5,7 +5,9 @@ import { Quest } from "@/state-machines/QuestStateMachine";
 import { quests } from "@/game-data/questData";
 import eventsCenter from "@/events/eventsCenter";
 import type { ItemData } from "@/game-data/itemObjects";
-import { InteractionManager } from "@/state-machines/InteractionManager";
+import { InteractionManager } from "@/helpers/InteractionManager";
+import { useGameObjectStore } from "@/stores/gameObjects";
+import { PortalItem } from "@/objects/PortalItem";
 
 export class GameScene extends Phaser.Scene {
     private cursors!: Phaser.Types.Input.Keyboard.CursorKeys | undefined;
@@ -13,20 +15,29 @@ export class GameScene extends Phaser.Scene {
     private velocityX: number = 0;
     private backgrounds: { ratioX: number, sprite: Phaser.GameObjects.TileSprite }[] = [];
     private player!: Phaser.GameObjects.Sprite;
-    private tent!: InteractiveItem;
-    private logs!: InteractiveItem;
-    private bonfire!: InteractiveItem;
-    private explorer!: IInteractiveCharacter;
+    public tent!: PortalItem;
+    public logs!: InteractiveItem;
+    public bonfire!: InteractiveItem;
+    public explorer!: IInteractiveCharacter;
     private sealGroup!: Phaser.GameObjects.Group;
+    public inventoryGroup!: Phaser.GameObjects.Group;
     private gameWidth!: number;
     private gameHeight!: number;
     private fog!: Phaser.GameObjects.TileSprite;
     private water!: Phaser.GameObjects.TileSprite;
-    private bribeQuest!: Quest;
+    public theBribe!: Quest;
+    public searchTent!: Quest;
     private interactionManager!: InteractionManager;
 
     constructor() {
         super({ key: SceneKeys.Game });
+    }
+
+    createQuests() {
+        this.searchTent = new Quest(quests.searchTent, this.tent, this)
+        this.theBribe = new Quest(quests.theBribe, this.explorer, this)
+        this.theBribe.controller.setState("locked");
+        this.searchTent.controller.setState("locked");
     }
 
     createPlayer() {
@@ -111,11 +122,6 @@ export class GameScene extends Phaser.Scene {
         this.windSound = this.sound.add(AudioKeys.ArcticWinds)
     }
 
-    createBribeQuest(gameObject: Phaser.GameObjects.Sprite) {
-        this.bribeQuest = new Quest(quests.theBribe, gameObject)
-        this.bribeQuest.controller.setState("locked");
-    }
-
     create() {
         // Set Up Stuff
         this.gameWidth = this.scale.width;
@@ -134,8 +140,10 @@ export class GameScene extends Phaser.Scene {
         const myCam = this.cameras.main;
         myCam.setBackgroundColor('#dce2ed');
         myCam.setBounds(0, 0, this.gameWidth * 5, this.gameHeight);
-        
-        this.interactionManager = new InteractionManager(this)
+        this.inventoryGroup = this.add.group();
+        this.interactionManager = new InteractionManager(this);
+
+        const store = useGameObjectStore()
 
         // Create Sprites
         this.createBackground();
@@ -144,9 +152,7 @@ export class GameScene extends Phaser.Scene {
             .setOrigin(0)
             .setScrollFactor(0)
             
-        const inventoryGroup = this.add.group();
-
-        this.tent = new InteractiveItem(this, 2770, this.gameHeight - 360, TextureKeys.Tent)
+        this.tent = new PortalItem(this, 2770, this.gameHeight - 360, TextureKeys.Tent)
             .setScale(3)
         this.add.existing(this.tent);
         this.tent.createDropZone(TextureKeys.Tent, 3)
@@ -167,7 +173,6 @@ export class GameScene extends Phaser.Scene {
             .setScale(2)
             .setScrollFactor(1)
         this.explorer.anims.play('explorer_wind');
-        this.createBribeQuest(this.explorer);
 
         this.player = this.createPlayer();
         myCam.startFollow(this.player, true, 0.05, 0.05);
@@ -183,6 +188,9 @@ export class GameScene extends Phaser.Scene {
             color: "#000000",
         })
 
+        // create quests
+        this.createQuests()
+
 
         // Item Triggers
         eventsCenter.on("lookAtItem", (item: InteractiveItem) => {
@@ -195,8 +203,16 @@ export class GameScene extends Phaser.Scene {
             }
         });
 
-        eventsCenter.on("interactInWorld", (item: InteractiveItem, pointer: Phaser.Math.Vector2) => {
+        eventsCenter.on("interactInWorld", (item: InteractiveItem | PortalItem, pointer: Phaser.Math.Vector2) => {
             this.scene.launch(SceneKeys.InteractionMenu, { item, pointer })
+            const portalItem = item as PortalItem;
+            if (portalItem.isUnlocked) {
+                this.scene.sleep(SceneKeys.Game)
+                this.scene.sleep(SceneKeys.Snowfall)
+                this.scene.stop(SceneKeys.InteractionMenu)
+                myCam.fadeOut()
+                this.scene.start(SceneKeys.TentScene)
+            }
         })
 
         this.scene.launch(SceneKeys.Snowfall, {
@@ -211,18 +227,26 @@ export class GameScene extends Phaser.Scene {
             gameObject.x = dragX,
             gameObject.y = dragY
         })
+        console.log(this)
 
         this.input.on("dragend", (pointer: any, gameObject: Phaser.GameObjects.Sprite) => {
             gameObject.setAlpha(1);
+            Phaser.Actions.GridAlign(this.inventoryGroup.getChildren(), {
+                width: -1,
+                cellWidth: 900 * 0.12,
+                cellHeight: 32,
+                x: 12,
+                y: 580 - 82,
+            });
         });
 
         this.input.on('drop', (pointer: Phaser.Math.Vector2, gameObject: Phaser.GameObjects.Sprite, dropZone: Phaser.GameObjects.Zone) =>
-        {
-            this.interactionManager.useWith(gameObject, dropZone.name as TextureKeys)
+        {  
+            this.interactionManager.useWith(gameObject, dropZone.name as TextureKeys.Bonfire | TextureKeys.Tent)
         });
 
         // Quest Triggers
-        eventsCenter.once("logsStolen", () => this.bribeQuest.controller.setState("unlocked"))
+        eventsCenter.once("logsStolen", () => this.theBribe.controller.setState("unlocked"))
     }
 
     update(dt: number, fr: number) {

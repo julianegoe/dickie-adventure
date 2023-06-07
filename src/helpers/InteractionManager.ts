@@ -1,22 +1,19 @@
 import { SceneKeys, TextureKeys } from "@/constants";
-import { items, type InteractiveItemInterface } from "@/game-data/itemObjects";
+import { items } from "@/game-data/itemObjects";
 import type InteractiveItem from "@/objects/InteractiveItem";
-import { useGameObjectStore } from "@/stores/gameObjects";
-import type { Scene } from "phaser";
+import type { GameScene } from "@/scenes/GameScene";
 
 export class InteractionManager {
-    private scene!: Scene;
-    private store!: any;
+    private scene!: GameScene;
 
-    constructor(scene: Scene) {
+    constructor(scene: GameScene) {
         this.scene = scene;
-        this.store = useGameObjectStore(); 
     }
 
-    public useWith(inventoryItem: Phaser.GameObjects.Sprite, worldItemName: TextureKeys) {
+    public useWith(inventoryItem: Phaser.GameObjects.Sprite, worldItemName: TextureKeys.Bonfire | TextureKeys.Tent) {
         if (inventoryItem && worldItemName !== inventoryItem.name) {
             const condition = items[worldItemName]?.interactionCondition;
-            const worldItem: InteractiveItem = this.store.getObject(worldItemName)
+            const worldItem: InteractiveItem = this.scene[worldItemName];
             if (condition && worldItem) {
                 const isSolved: boolean = condition(inventoryItem, worldItem)
                 if (isSolved) {
@@ -24,8 +21,7 @@ export class InteractionManager {
                     this.scene.scene.launch(SceneKeys.DisplayText, { text: worldItem.getData("successText"), autoDelete: true });
                     worldItem.controller.setState("questCompleted");
                 } else {
-                    const group: Phaser.GameObjects.Group = this.store.getInventoryGroup();
-                    Phaser.Actions.GridAlign(group.getChildren(), {
+                    Phaser.Actions.GridAlign(this.scene.inventoryGroup.getChildren(), {
                         width: -1,
                         cellWidth: 900 * 0.12,
                         cellHeight: 32,
@@ -39,6 +35,10 @@ export class InteractionManager {
         } else {
             this.resetItem(inventoryItem);
         }
+    }
+
+    public combineInventoryIntems(itemA: Phaser.GameObjects.Sprite, itemB: Phaser.GameObjects.Sprite) {
+
     }
 
     private resetItem(inventoryItem: Phaser.GameObjects.Sprite) {

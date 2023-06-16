@@ -13,7 +13,6 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-    gameStore.setGameScene(false);
     gameInstance?.destroy(false)
 })
 

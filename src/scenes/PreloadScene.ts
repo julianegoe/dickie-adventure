@@ -54,7 +54,7 @@ export class PreloadScene extends Phaser.Scene {
     }
 
     preload() {
-        //this.load.addFile(new WebFontFile(this.load, 'VT323'));
+        this.load.addFile(new WebFontFile(this.load, 'VT323'));
         this.load.image(TextureKeys.Mountains, 'iceworld/mountains.png');
         this.load.image(TextureKeys.Foreground, 'iceworld/foreground.png');
         this.load.image(TextureKeys.Ground, 'iceworld/ground.png');
@@ -69,7 +69,10 @@ export class PreloadScene extends Phaser.Scene {
         this.load.image(TextureKeys.LookAt, 'lookat.png');
         this.load.image(TextureKeys.Take, 'take.png');
         this.load.image(TextureKeys.DialogueChoices, 'dialogue_choices.png');
-        this.load.image(TextureKeys.UiBox, 'ui/slice.png')
+        this.load.image(TextureKeys.UiBox, 'ui/slice.png');
+
+	    this.load.image(TextureKeys.TentInside, 'tent_inside/tent_inside.png')
+	    this.load.tilemapTiledJSON('tent_inside_tilemap', 'tent_inside/tent_inside.json')
 
         this.load.atlas(CharacterKey.Explorer, "explorer.png", "explorer.json");
         this.load.atlas(TextureKeys.Logs, "logs.png", "logs.json");

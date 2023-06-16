@@ -83,39 +83,39 @@ export class GameScene extends Phaser.Scene {
             sprite: this.add.tileSprite(0, 0, this.gameWidth, this.gameHeight - 100, TextureKeys.Sky)
                 .setOrigin(0)
                 .setScrollFactor(0)
-                .setScale(2,2)
+                .setScale(2, 2)
         });
         this.backgrounds.push({
             ratioX: 0.3,
             sprite: this.add.tileSprite(0, 0, this.gameWidth, this.gameHeight - 100, TextureKeys.Mountains)
                 .setOrigin(0)
                 .setScrollFactor(0)
-                .setScale(2,2)
+                .setScale(2, 2)
         });
         this.backgrounds.push({
             ratioX: 0.4,
             sprite: this.add.tileSprite(0, 0, this.gameWidth, this.gameHeight - 100, TextureKeys.Ground)
                 .setOrigin(0)
                 .setScrollFactor(0)
-                .setScale(2,2)
+                .setScale(2, 2)
         })
         this.backgrounds.push({
             ratioX: 0.35,
             sprite: this.add.tileSprite(0, 0, this.gameWidth, this.gameHeight - 100, TextureKeys.Middleground)
                 .setOrigin(0)
                 .setScrollFactor(0)
-                .setScale(2,2)
+                .setScale(2, 2)
         });
         this.fog = this.add.tileSprite(0, 0, this.gameWidth, this.gameHeight - 100, TextureKeys.Fog)
-        .setOrigin(0)
-        .setScrollFactor(0)
-        .setAlpha(0.3)
-        .setScale(2,2);
+            .setOrigin(0)
+            .setScrollFactor(0)
+            .setAlpha(0.3)
+            .setScale(2, 2);
 
         this.water = this.add.tileSprite(0, 0, this.gameWidth, this.gameHeight - 100, TextureKeys.Water)
             .setOrigin(0)
             .setScrollFactor(0)
-            .setScale(2,2)
+            .setScale(2, 2)
     }
 
     addSounds() {
@@ -143,15 +143,13 @@ export class GameScene extends Phaser.Scene {
         this.inventoryGroup = this.add.group();
         this.interactionManager = new InteractionManager(this);
 
-        const store = useGameObjectStore()
-
         // Create Sprites
         this.createBackground();
         this.createNpc();
         this.add.nineslice(0, this.scale.height - 100, TextureKeys.UiBox, 0, 900, 100, 32, 32, 32, 32)
             .setOrigin(0)
             .setScrollFactor(0)
-            
+
         this.tent = new PortalItem(this, 2770, this.gameHeight - 360, TextureKeys.Tent)
             .setScale(3)
         this.add.existing(this.tent);
@@ -203,15 +201,17 @@ export class GameScene extends Phaser.Scene {
             }
         });
 
+        /* ToDo: refactor */
         eventsCenter.on("interactInWorld", (item: InteractiveItem | PortalItem, pointer: Phaser.Math.Vector2) => {
             this.scene.launch(SceneKeys.InteractionMenu, { item, pointer })
             const portalItem = item as PortalItem;
             if (portalItem.isUnlocked) {
-                this.scene.sleep(SceneKeys.Game)
-                this.scene.sleep(SceneKeys.Snowfall)
-                this.scene.stop(SceneKeys.InteractionMenu)
-                myCam.fadeOut()
-                this.scene.start(SceneKeys.TentScene)
+                myCam.fadeOut(1000, 0, 0, 0);
+                myCam.once("camerafadeoutcomplete", () => {
+                    this.scene.sleep(SceneKeys.Game);
+                    this.scene.stop(SceneKeys.InteractionMenu);
+                    this.scene.start(SceneKeys.TentScene);
+                })
             }
         })
 
@@ -225,9 +225,8 @@ export class GameScene extends Phaser.Scene {
 
         this.input.on("drag", (pointer: any, gameObject: Phaser.GameObjects.Sprite, dragX: number, dragY: number) => {
             gameObject.x = dragX,
-            gameObject.y = dragY
+                gameObject.y = dragY
         })
-        console.log(this)
 
         this.input.on("dragend", (pointer: any, gameObject: Phaser.GameObjects.Sprite) => {
             gameObject.setAlpha(1);
@@ -240,8 +239,7 @@ export class GameScene extends Phaser.Scene {
             });
         });
 
-        this.input.on('drop', (pointer: Phaser.Math.Vector2, gameObject: Phaser.GameObjects.Sprite, dropZone: Phaser.GameObjects.Zone) =>
-        {  
+        this.input.on('drop', (pointer: Phaser.Math.Vector2, gameObject: Phaser.GameObjects.Sprite, dropZone: Phaser.GameObjects.Zone) => {
             this.interactionManager.useWith(gameObject, dropZone.name as TextureKeys.Bonfire | TextureKeys.Tent)
         });
 

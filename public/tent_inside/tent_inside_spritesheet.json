@@ -1,0 +1,44 @@
+{ "frames": [
+   {
+    "filename": "tent_inside_background",
+    "frame": { "x": 0, "y": 0, "w": 225, "h": 125 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 225, "h": 125 },
+    "sourceSize": { "w": 225, "h": 125 },
+    "duration": 100
+   },
+   {
+    "filename": "tent_inside_foreground",
+    "frame": { "x": 230, "y": 0, "w": 225, "h": 125 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 225, "h": 125 },
+    "sourceSize": { "w": 225, "h": 125 },
+    "duration": 100
+   },
+   {
+    "filename": "tent_inside_bed",
+    "frame": { "x": 460, "y": 0, "w": 225, "h": 125 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 225, "h": 125 },
+    "sourceSize": { "w": 225, "h": 125 },
+    "duration": 100
+   }
+ ],
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.3-rc2-x64",
+  "format": "RGBA8888",
+  "size": { "w": 685, "h": 125 },
+  "scale": "1",
+  "frameTags": [
+  ],
+  "layers": [
+   { "name": "tent_inside", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+  ]
+ }
+}

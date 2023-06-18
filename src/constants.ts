@@ -14,6 +14,7 @@ enum TextureKeys {
     Seal = 'seal',
     Tent = 'tent',
     TentInside = 'tent_inside',
+    TentInsideBed = "tent_inside_bed",
     InteractionMenu = 'interaction_menu',
     DialogueChoices = 'dialogue_choices',
     Fog = 'fog',

@@ -1,13 +1,11 @@
 import { AnimationKeys, AudioKeys, CharacterKey, FrameKeys, SceneKeys, TextureKeys } from "@/constants";
 import InteractiveItem from "../objects/InteractiveItem";
-import Vector2 = Phaser.Math.Vector2;
 import { Quest } from "@/state-machines/QuestStateMachine";
 import { quests } from "@/game-data/questData";
 import eventsCenter from "@/events/eventsCenter";
-import type { ItemData } from "@/game-data/itemObjects";
 import { InteractionManager } from "@/helpers/InteractionManager";
-import { useGameObjectStore } from "@/stores/gameObjects";
 import { PortalItem } from "@/objects/PortalItem";
+import { InventoryManager } from "@/helpers/InventoryManager";
 
 export class GameScene extends Phaser.Scene {
     private cursors!: Phaser.Types.Input.Keyboard.CursorKeys | undefined;
@@ -20,14 +18,15 @@ export class GameScene extends Phaser.Scene {
     public bonfire!: InteractiveItem;
     public explorer!: IInteractiveCharacter;
     private sealGroup!: Phaser.GameObjects.Group;
-    public inventoryGroup!: Phaser.GameObjects.Group;
     private gameWidth!: number;
     private gameHeight!: number;
     private fog!: Phaser.GameObjects.TileSprite;
     private water!: Phaser.GameObjects.TileSprite;
     public theBribe!: Quest;
     public searchTent!: Quest;
-    private interactionManager!: InteractionManager;
+    public interactionManager!: InteractionManager;
+    public inventoryManager!: InventoryManager;
+    public worldItemGroup!: Phaser.GameObjects.Group;
 
     constructor() {
         super({ key: SceneKeys.Game });
@@ -45,36 +44,6 @@ export class GameScene extends Phaser.Scene {
             .setOrigin(0)
             .setScale(2)
             .setDepth(10)
-    }
-
-    createNpc() {
-        this.anims.create({
-            key: 'npc_left',
-            frames: this.anims.generateFrameNames(TextureKeys.Seal, {
-                prefix: AnimationKeys.DickieMoveLeft,
-                end: 3,
-                zeroPad: 3,
-            }),
-            repeat: -1,
-            frameRate: 7,
-        });
-        this.sealGroup = this.add.group();
-        const seal = this.add.sprite(200, this.gameHeight - 240, TextureKeys.Seal)
-            .setOrigin(0)
-            .setScale(0.5);
-        const seal2 = this.add.sprite(230, this.gameHeight - 245, TextureKeys.Seal)
-            .setOrigin(0)
-            .setScale(0.5);
-        const seal3 = this.add.sprite(257, this.gameHeight - 237, TextureKeys.Seal)
-            .setOrigin(0)
-            .setScale(0.5);
-        this.sealGroup.addMultiple([
-            seal, seal2, seal3
-        ], true);
-        seal.anims.play('npc_left');
-        seal2.anims.play('npc_left');
-        seal3.anims.play('npc_left');
-
     }
 
     createBackground() {
@@ -124,6 +93,11 @@ export class GameScene extends Phaser.Scene {
 
     create() {
         // Set Up Stuff
+        this.inventoryManager = new InventoryManager(this);
+        this.inventoryManager.initInventory((gameObject: any, dropZone: any) => {
+            this.interactionManager.useWith(gameObject, dropZone.name as TextureKeys.Bonfire | TextureKeys.Tent)
+        });
+        this.worldItemGroup = this.add.group();
         this.gameWidth = this.scale.width;
         this.gameHeight = this.scale.height;
         this.cursors = this.input.keyboard?.createCursorKeys();
@@ -140,31 +114,29 @@ export class GameScene extends Phaser.Scene {
         const myCam = this.cameras.main;
         myCam.setBackgroundColor('#dce2ed');
         myCam.setBounds(0, 0, this.gameWidth * 5, this.gameHeight);
-        this.inventoryGroup = this.add.group();
         this.interactionManager = new InteractionManager(this);
 
         // Create Sprites
         this.createBackground();
-        this.createNpc();
-        this.add.nineslice(0, this.scale.height - 100, TextureKeys.UiBox, 0, 900, 100, 32, 32, 32, 32)
-            .setOrigin(0)
-            .setScrollFactor(0)
 
         this.tent = new PortalItem(this, 2770, this.gameHeight - 360, TextureKeys.Tent)
             .setScale(3)
         this.add.existing(this.tent);
+        this.worldItemGroup.add(this.tent);
         this.tent.createDropZone(TextureKeys.Tent, 3)
 
         this.logs = new InteractiveItem(this, 3050, this.gameHeight - 250, TextureKeys.Logs, FrameKeys.LogQuant3)
             .setOrigin(0)
             .setScale(1.5)
         this.add.existing(this.logs);
+        this.worldItemGroup.add(this.logs);
 
         this.bonfire = new InteractiveItem(this, 3150, this.gameHeight - 320, TextureKeys.Bonfire, FrameKeys.Bonfire1)
             .setOrigin(0)
             .setScale(1.5)
         this.add.existing(this.bonfire);
-        this.bonfire.createDropZone(TextureKeys.Bonfire, 1.5)
+        this.worldItemGroup.add(this.bonfire);
+        this.bonfire.createDropZone(TextureKeys.Bonfire, 1.5);
 
         this.explorer = this.add.interactiveCharacter(2500, this.gameHeight - 390, CharacterKey.Explorer)
             .setOrigin(0)
@@ -209,7 +181,7 @@ export class GameScene extends Phaser.Scene {
                 myCam.fadeOut(1000, 0, 0, 0);
                 myCam.once("camerafadeoutcomplete", () => {
                     this.scene.sleep(SceneKeys.Game);
-                    this.scene.stop(SceneKeys.InteractionMenu);
+                    //this.scene.stop(SceneKeys.InteractionMenu);
                     this.scene.start(SceneKeys.TentScene);
                 })
             }
@@ -217,30 +189,6 @@ export class GameScene extends Phaser.Scene {
 
         this.scene.launch(SceneKeys.Snowfall, {
             player: this.player,
-        });
-
-        this.input.on("dragstart", (pointer: any, gameObject: any) => {
-            gameObject.setAlpha(0.7)
-        })
-
-        this.input.on("drag", (pointer: any, gameObject: Phaser.GameObjects.Sprite, dragX: number, dragY: number) => {
-            gameObject.x = dragX,
-                gameObject.y = dragY
-        })
-
-        this.input.on("dragend", (pointer: any, gameObject: Phaser.GameObjects.Sprite) => {
-            gameObject.setAlpha(1);
-            Phaser.Actions.GridAlign(this.inventoryGroup.getChildren(), {
-                width: -1,
-                cellWidth: 900 * 0.12,
-                cellHeight: 32,
-                x: 12,
-                y: 580 - 82,
-            });
-        });
-
-        this.input.on('drop', (pointer: Phaser.Math.Vector2, gameObject: Phaser.GameObjects.Sprite, dropZone: Phaser.GameObjects.Zone) => {
-            this.interactionManager.useWith(gameObject, dropZone.name as TextureKeys.Bonfire | TextureKeys.Tent)
         });
 
         // Quest Triggers
@@ -271,10 +219,5 @@ export class GameScene extends Phaser.Scene {
         })
         this.fog.tilePositionX += 1.8
         this.water.tilePositionX += 0.8
-
-        this.sealGroup.children.entries.forEach((seal) => {
-            const sealCopy = seal as Phaser.GameObjects.Sprite
-            sealCopy.x -= 0.8
-        });
     }
 }

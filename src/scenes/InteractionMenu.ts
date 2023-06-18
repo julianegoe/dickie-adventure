@@ -33,7 +33,7 @@ export default class InteractionMenu extends Phaser.Scene {
     create() {
         this.menuRectangle = this.add.sprite(this.pointer.x, this.pointer.y - 50, TextureKeys.InteractionMenu).setOrigin(0).setInteractive(new Phaser.Geom.Rectangle(this.pointer.x, this.pointer.y - 50, 200, 100), (item) => {
             return !item.contains(this.input.x, this.input.y)
-        })
+        });
         const rectangleColumn = this.menuRectangle.getBounds().width / 4;
         const rectangleRow = this.menuRectangle.getBounds().height / 2
         this.lookAt = this.add.sprite(this.pointer.x + rectangleColumn, this.pointer.y + rectangleRow - 50, TextureKeys.LookAt).setScale(3).setInteractive();
@@ -44,8 +44,8 @@ export default class InteractionMenu extends Phaser.Scene {
         this.take.on('pointerout', () => this.take.setScale(3));
         this.lookAt.on('pointerdown', () => this.lookAtItem());
         this.take.on('pointerdown', () => this.takeItem());
-        this.menuRectangle.on('pointerover', () => {
+        /* this.menuRectangle.on('pointerover', () => {
             this.scene.stop(SceneKeys.InteractionMenu)
-        })
+        }) */
     }
 }

@@ -85,7 +85,6 @@ let items: Partial<InteractiveItemInterface> =
                 worldItem.setFrame(FrameKeys.Bonfire2);
                 worldItem.setData("lookAtText", "Brennt.");
                 const bribeQuest = store.getQuest(QuestKeys.TheBribe);
-                console.log(bribeQuest);
                 bribeQuest.controller.setState("unlockedNextStage");
                 bribeQuest.controller.setState("completed")
                 return true
@@ -106,6 +105,27 @@ let items: Partial<InteractiveItemInterface> =
         initialFrame: TextureKeys.Fish,
         successText: "Meins. Chöchöchö", 
         failureText: "Der ist mir wohl entwischt.",
+        interactionCondition: function (inventoryItem: Phaser.GameObjects.Sprite, worldItem: Phaser.GameObjects.Sprite) {
+            if (worldItem.getData("interactable")) {
+                console.log(`interact ${inventoryItem.name} with ${worldItem.name}`);
+                return true;
+            }
+            return false;
+        },
+    },
+    tent_inside_bed: {
+        id: 5,
+        name: "Bett",
+        altName: "Bett",
+        key: TextureKeys.TentInsideBed,
+        removeable: false,
+        interactable: true,
+        lookAtText: "Gemütlich.",
+        takeText: DEFAULT_TAKE_TEXT,
+        frames: [],
+        initialFrame: TextureKeys.TentInsideBed,
+        successText: "", 
+        failureText: DEFAULT_FAILURE_TEXT,
         interactionCondition: function (inventoryItem: Phaser.GameObjects.Sprite, worldItem: Phaser.GameObjects.Sprite) {
             if (worldItem.getData("interactable")) {
                 console.log(`interact ${inventoryItem.name} with ${worldItem.name}`);

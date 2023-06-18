@@ -66,6 +66,7 @@ export class PreloadScene extends Phaser.Scene {
         this.load.image(TextureKeys.Snow, 'snowflake.png');
         this.load.image(TextureKeys.Tent, 'tent.png');
         this.load.image(TextureKeys.Fish, 'fish.png');
+        this.load.image(TextureKeys.TentInsideBed, 'tent_inside/tent_inside_bed.png');
         this.load.image(TextureKeys.LookAt, 'lookat.png');
         this.load.image(TextureKeys.Take, 'take.png');
         this.load.image(TextureKeys.DialogueChoices, 'dialogue_choices.png');
@@ -87,6 +88,6 @@ export class PreloadScene extends Phaser.Scene {
         this.createAnimations();
         this.createExplorerAnimation();
         this.input.setDefaultCursor('url(/crosshair.cur), pointer');
-        this.scene.start(SceneKeys.Game);
+        this.scene.start(SceneKeys.TentScene);
     }
 }

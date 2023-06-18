@@ -1,7 +1,10 @@
+import type { FrameKeys, TextureKeys } from "@/constants";
 import eventsCenter from "@/events/eventsCenter";
+import type { InventoryManager } from "@/helpers/InventoryManager";
 import type InteractiveItem from "@/objects/InteractiveItem";
 import type { PortalItem } from "@/objects/PortalItem";
 import type { GameScene } from "@/scenes/GameScene";
+import type { TentScene } from "@/scenes/TentScene";
 import { useGameObjectStore } from "@/stores/gameObjects";
 import type { Scene } from "phaser";
 
@@ -15,7 +18,7 @@ export default class ItemController {
         const frames = item.getData("frames") as string[];
         this.possibleStates = {
             inWorld: new InWorldState(item),
-            inInventory: new InInventoryState(item, scene, frames, scene.inventoryGroup),
+            inInventory: new InInventoryState(item, scene, frames),
             questCompleted: new QuestCompletedState(item),
             locked: new LockedState(item as PortalItem),
             unlocked: new UnlockedState(item as PortalItem),
@@ -45,15 +48,13 @@ class InWorldState {
 
 class InInventoryState {
     private item!: Phaser.GameObjects.Sprite;
-    private scene!: Scene;
+    private scene!: GameScene | TentScene;
     private readonly frames!: string[];
     private currentCloneFrame!: number;
     private currentItemFrame: number = 0;
     private clone!: Phaser.GameObjects.Sprite;
-    private store!: any;
-    private group!: Phaser.GameObjects.Group;
 
-    constructor(item: Phaser.GameObjects.Sprite, scene: Scene, frames: string[], group: Phaser.GameObjects.Group) {
+    constructor(item: Phaser.GameObjects.Sprite, scene: GameScene | TentScene, frames: string[]) {
         this.item = item;
         this.scene = scene;
         this.frames = frames
@@ -63,23 +64,21 @@ class InInventoryState {
             .setOrigin(0)
             .setScale(2)
             .setVisible(false)
-            .setInteractive({ draggable: true})
+            .setInteractive({ draggable: true })
             .setData(this.item.data.values)
-            .setName(this.item.name);
+            .setName(this.item.name)
+            .setDepth(2);
         this.clone.on("pointerdown", () => eventsCenter.emit("interactInInventory", this.clone))
-        this.store = useGameObjectStore();
-        this.group = group;
     }
 
     enter() {
         this.currentCloneFrame -= 1;
         this.currentItemFrame += 1;
-        
-
-        this.group.add(this.clone)
+        this.scene.inventoryManager.inventoryGroup.add(this.clone);
         if (this.frames.length > 0 && this.currentCloneFrame < this.frames.length && this.currentCloneFrame >= 0) {
             this.clone.setFrame(this.frames[this.currentCloneFrame]);
-            this.clone.setVisible(true)
+            this.clone.setVisible(true);
+            this.scene.inventoryManager.addToInventory(this.item.name as TextureKeys, this.frames[this.currentCloneFrame] as FrameKeys)
         } else if (this.frames.length === 0) {
             this.clone.setVisible(true)
         }
@@ -88,13 +87,7 @@ class InInventoryState {
         } else {
             this.item.destroy(true)
         }
-        Phaser.Actions.GridAlign(this.group.getChildren(), {
-            width: -1,
-            cellWidth: this.scene.scale.width * 0.12,
-            cellHeight: 32,
-            x: 12,
-            y: this.scene.scale.height - 82,
-        });
+        this.scene.inventoryManager.alignItems()
     }
 }
 

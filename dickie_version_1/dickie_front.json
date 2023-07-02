@@ -1,0 +1,56 @@
+{
+  "frames": [
+    {
+      "filename": "dicke_front_0001",
+      "frame": {
+        "x": 0,
+        "y": 6,
+        "w": 32,
+        "h": 25
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 25
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 25
+      }
+    },
+    {
+      "filename": "dicke_front_0002",
+      "frame": {
+        "x": 40,
+        "y": 4,
+        "w": 32,
+        "h": 28
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 28
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 28
+      }
+    }
+  ],
+  "meta": {
+    "app": "https://www.leshylabs.com/apps/sstool/",
+    "version": "Leshy SpriteSheet Tool v0.8.4",
+    "image": "dicke_front.png",
+    "size": {
+      "w": 72,
+      "h": 32
+    },
+    "scale": 1
+  }
+}

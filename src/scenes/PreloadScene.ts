@@ -66,6 +66,7 @@ export class PreloadScene extends Phaser.Scene {
         this.load.image(TextureKeys.Snow, 'snowflake.png');
         this.load.image(TextureKeys.Tent, 'tent.png');
         this.load.image(TextureKeys.Fish, 'fish.png');
+        this.load.image(TextureKeys.Skull, 'tent_inside/polarbear_skull.png');
         this.load.image(TextureKeys.TentInsideBed, 'tent_inside/tent_inside_bed.png');
         this.load.image(TextureKeys.LookAt, 'lookat.png');
         this.load.image(TextureKeys.Take, 'take.png');

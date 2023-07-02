@@ -17,7 +17,6 @@ export class GameScene extends Phaser.Scene {
     public logs!: InteractiveItem;
     public bonfire!: InteractiveItem;
     public explorer!: IInteractiveCharacter;
-    private sealGroup!: Phaser.GameObjects.Group;
     private gameWidth!: number;
     private gameHeight!: number;
     private fog!: Phaser.GameObjects.TileSprite;
@@ -123,7 +122,7 @@ export class GameScene extends Phaser.Scene {
             .setScale(3)
         this.add.existing(this.tent);
         this.worldItemGroup.add(this.tent);
-        this.tent.createDropZone(TextureKeys.Tent, 3)
+        this.tent.createDropZone(3)
 
         this.logs = new InteractiveItem(this, 3050, this.gameHeight - 250, TextureKeys.Logs, FrameKeys.LogQuant3)
             .setOrigin(0)
@@ -136,7 +135,7 @@ export class GameScene extends Phaser.Scene {
             .setScale(1.5)
         this.add.existing(this.bonfire);
         this.worldItemGroup.add(this.bonfire);
-        this.bonfire.createDropZone(TextureKeys.Bonfire, 1.5);
+        this.bonfire.createDropZone(1.5);
 
         this.explorer = this.add.interactiveCharacter(2500, this.gameHeight - 390, CharacterKey.Explorer)
             .setOrigin(0)
@@ -178,11 +177,11 @@ export class GameScene extends Phaser.Scene {
             this.scene.launch(SceneKeys.InteractionMenu, { item, pointer })
             const portalItem = item as PortalItem;
             if (portalItem.isUnlocked) {
+                this.scene.stop(SceneKeys.InteractionMenu)
+                eventsCenter.destroy();
                 myCam.fadeOut(1000, 0, 0, 0);
                 myCam.once("camerafadeoutcomplete", () => {
-                    this.scene.sleep(SceneKeys.Game);
-                    //this.scene.stop(SceneKeys.InteractionMenu);
-                    this.scene.start(SceneKeys.TentScene);
+                    this.scene.start(SceneKeys.TentScene)
                 })
             }
         })

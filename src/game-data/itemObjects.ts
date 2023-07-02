@@ -1,4 +1,5 @@
 import { FrameKeys, QuestKeys, TextureKeys } from "@/constants";
+import type InteractiveItem from "@/objects/InteractiveItem";
 import { useGameObjectStore } from "@/stores/gameObjects";
 
 const DEFAULT_TAKE_TEXT = "Das kann ich nicht mitnehmen"
@@ -19,7 +20,7 @@ export interface ItemData {
     initialFrame: FrameKeys | string;
     successText: string, 
     failureText: string
-    interactionCondition: (inventoryItem: Phaser.GameObjects.Sprite, worldItem: Phaser.GameObjects.Sprite) => boolean
+    interactionCondition: (inventoryItem: Phaser.GameObjects.Sprite, worldItem: InteractiveItem) => boolean
 }
 
 export type InteractiveItemInterface = {
@@ -126,8 +127,32 @@ let items: Partial<InteractiveItemInterface> =
         initialFrame: TextureKeys.TentInsideBed,
         successText: "", 
         failureText: DEFAULT_FAILURE_TEXT,
-        interactionCondition: function (inventoryItem: Phaser.GameObjects.Sprite, worldItem: Phaser.GameObjects.Sprite) {
+        interactionCondition: function (inventoryItem: Phaser.GameObjects.Sprite, worldItem: InteractiveItem) {
             if (worldItem.getData("interactable")) {
+                console.log(`interact ${inventoryItem.name} with ${worldItem.name}`);
+                if (worldItem.name == TextureKeys.TentInsideBed) {
+                    return false;
+                }
+                return true;
+            }
+            return false;
+        },
+    },
+    polarbear_skull: {
+        id: 6,
+        name: "Eisbär-Schädel",
+        altName: "Eisbär-Schädel",
+        key: TextureKeys.Skull,
+        removeable: true,
+        interactable: true,
+        lookAtText: "So kannst du mich nicht mehr fressen, chöchöchö.",
+        takeText: "Bist bei mir besser aufgehoben.",
+        frames: [],
+        initialFrame: TextureKeys.Skull,
+        successText: "Das passt.", 
+        failureText: DEFAULT_FAILURE_TEXT,
+        interactionCondition: function (inventoryItem: Phaser.GameObjects.Sprite, worldItem: InteractiveItem) {
+            if (worldItem.getData("interactable") && worldItem.controller.getState() === "unlocked") {
                 console.log(`interact ${inventoryItem.name} with ${worldItem.name}`);
                 return true;
             }

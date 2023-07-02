@@ -1,20 +1,17 @@
 import type { FrameKeys, TextureKeys } from "@/constants";
 import eventsCenter from "@/events/eventsCenter";
-import type { InventoryManager } from "@/helpers/InventoryManager";
 import type InteractiveItem from "@/objects/InteractiveItem";
 import type { PortalItem } from "@/objects/PortalItem";
 import type { GameScene } from "@/scenes/GameScene";
 import type { TentScene } from "@/scenes/TentScene";
-import { useGameObjectStore } from "@/stores/gameObjects";
-import type { Scene } from "phaser";
 
 type StateNames = "inWorld" | "inInventory" | "questCompleted" | "locked" | "unlocked"
 
 export default class ItemController {
-    private possibleStates!: { [key in StateNames]: { enter: (args?: any) => void } };
-    private currentState!: { enter: () => void };
+    private possibleStates!: { [key in StateNames]: { enter: (args?: any) => void, getName: () => StateNames } };
+    private currentState!: { enter: () => void, getName: () => StateNames };
 
-    constructor(item: InteractiveItem | PortalItem, scene: GameScene) {
+    constructor(item: InteractiveItem | PortalItem, scene: GameScene | TentScene) {
         const frames = item.getData("frames") as string[];
         this.possibleStates = {
             inWorld: new InWorldState(item),
@@ -32,6 +29,10 @@ export default class ItemController {
         this.currentState = this.possibleStates[name]
         this.currentState.enter()
     }
+
+    getState() {
+        return this.currentState.getName()
+    }
 }
 
 class InWorldState {
@@ -43,6 +44,10 @@ class InWorldState {
 
     enter() {
         this.item.setVisible(true);
+    }
+
+    getName(): StateNames {
+        return "inWorld"
     }
 }
 
@@ -89,6 +94,9 @@ class InInventoryState {
         }
         this.scene.inventoryManager.alignItems()
     }
+    getName(): StateNames {
+        return "inInventory"
+    }
 }
 
 class QuestCompletedState {
@@ -100,6 +108,10 @@ class QuestCompletedState {
 
     enter() {
         console.log("solved")
+    }
+
+    getName(): StateNames {
+        return "questCompleted"
     }
 }
 
@@ -113,6 +125,10 @@ class LockedState {
     enter() {
         console.log("locked")
     }
+
+    getName(): StateNames {
+        return "locked"
+    }
 }
 
 class UnlockedState {
@@ -124,5 +140,9 @@ class UnlockedState {
 
     enter() {
         this.item.isUnlocked = true
+    }
+
+    getName(): StateNames {
+        return "unlocked"
     }
 }

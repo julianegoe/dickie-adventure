@@ -2,14 +2,14 @@ import { SceneKeys, TextureKeys } from "@/constants";
 
 export class SnowScene extends Phaser.Scene {
 
-    private player!: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
+    private player!: Phaser.GameObjects.Sprite;
 
     constructor() {
         super({ key: SceneKeys.Snowfall });
     }
 
     init(data: {
-        player: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
+        player: Phaser.GameObjects.Sprite;
     }) {
         this.player = data.player
     }

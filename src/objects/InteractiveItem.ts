@@ -3,6 +3,7 @@ import eventsCenter from '@/events/eventsCenter';
 import type { ItemData } from '@/game-data/itemObjects';
 import { items } from '@/game-data/itemObjects';
 import type { GameScene } from '@/scenes/GameScene';
+import type { TentScene } from '@/scenes/TentScene';
 import ItemController from '@/state-machines/ItemStateMachine';
 import Phaser, { Scene } from 'phaser'
 
@@ -44,20 +45,20 @@ export default class InteractiveItem extends Phaser.GameObjects.Sprite {
     }
 
     private createController() {
-        this.controller = new ItemController(this, this.scene as GameScene)
+        this.controller = new ItemController(this, this.scene as GameScene | TentScene)
     }
 
-    public createDropZone(texture: TextureKeys, scaleFactor: number) {
+    public createDropZone(scaleFactor: number) {
         const zone = this.scene.add.zone(this.x, this.y, this.width, this.height)
             .setRectangleDropZone(this.width, this.height)
-            .setName(texture)
+            .setName(this.texture.key)
             .setOrigin(0)
             .setScrollFactor(1)
             .setScale(scaleFactor)
             .setDepth(0);
-            //const graphics = this.scene.add.graphics();
-            //graphics.lineStyle(2, 0xffff00);
-            //graphics.strokeRect(zone.x, zone.y, zone.width * scaleFactor, zone.height * scaleFactor)
+            /* const graphics = this.scene.add.graphics();
+            graphics.lineStyle(2, 0xffff00);
+            graphics.strokeRect(zone.x, zone.y, zone.width * scaleFactor, zone.height * scaleFactor) */
     }
 }
 Phaser.GameObjects.GameObjectFactory.register(

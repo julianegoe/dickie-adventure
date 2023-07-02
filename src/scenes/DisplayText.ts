@@ -39,6 +39,7 @@ export default class DisplayText extends Phaser.Scene {
       }
 
     create() {
+        console.log("dialog")
         this.typewriteText(this.textData);
         eventsCenter.on("textWritten", () => {
             if (this.autoDelete) {

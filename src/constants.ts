@@ -24,6 +24,7 @@ enum TextureKeys {
     UiBox = 'ui_box',
     Logs = 'logs',
     Bonfire = 'bonfire',
+    Skull = 'polarbear_skull',
 }
 
 enum CharacterKey {

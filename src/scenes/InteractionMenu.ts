@@ -31,6 +31,7 @@ export default class InteractionMenu extends Phaser.Scene {
     }
 
     create() {
+        
         this.menuRectangle = this.add.sprite(this.pointer.x, this.pointer.y - 50, TextureKeys.InteractionMenu).setOrigin(0).setInteractive(new Phaser.Geom.Rectangle(this.pointer.x, this.pointer.y - 50, 200, 100), (item) => {
             return !item.contains(this.input.x, this.input.y)
         });

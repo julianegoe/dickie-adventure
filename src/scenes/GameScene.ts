@@ -9,10 +9,9 @@ import { InventoryManager } from "@/helpers/InventoryManager";
 
 export class GameScene extends Phaser.Scene {
     private cursors!: Phaser.Types.Input.Keyboard.CursorKeys | undefined;
-    private windSound!: Phaser.Sound.NoAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.WebAudioSound;
-    private velocityX: number = 0;
     private backgrounds: { ratioX: number, sprite: Phaser.GameObjects.TileSprite }[] = [];
-    private player!: Phaser.GameObjects.Sprite;
+    public player!: Phaser.GameObjects.Sprite;
+    private velocityX = 0;
     public tent!: PortalItem;
     public logs!: InteractiveItem;
     public bonfire!: InteractiveItem;
@@ -36,13 +35,6 @@ export class GameScene extends Phaser.Scene {
         this.theBribe = new Quest(quests.theBribe, this.explorer, this)
         this.theBribe.controller.setState("locked");
         this.searchTent.controller.setState("locked");
-    }
-
-    createPlayer() {
-        return this.add.sprite(100, this.gameHeight - 220, TextureKeys.DickieMove)
-            .setOrigin(0)
-            .setScale(2)
-            .setDepth(10)
     }
 
     createBackground() {
@@ -86,12 +78,9 @@ export class GameScene extends Phaser.Scene {
             .setScale(2, 2)
     }
 
-    addSounds() {
-        this.windSound = this.sound.add(AudioKeys.ArcticWinds)
-    }
-
     create() {
         // Set Up Stuff
+        this.cursors = this.input.keyboard?.createCursorKeys();
         this.inventoryManager = new InventoryManager(this);
         this.inventoryManager.initInventory((gameObject: any, dropZone: any) => {
             this.interactionManager.useWith(gameObject, dropZone.name as TextureKeys.Bonfire | TextureKeys.Tent)
@@ -99,19 +88,7 @@ export class GameScene extends Phaser.Scene {
         this.worldItemGroup = this.add.group();
         this.gameWidth = this.scale.width;
         this.gameHeight = this.scale.height;
-        this.cursors = this.input.keyboard?.createCursorKeys();
-        this.addSounds();
-        this.windSound.play({
-            mute: false,
-            volume: 2,
-            rate: 1,
-            detune: 0,
-            seek: 0,
-            loop: true,
-            delay: 0,
-        })
         const myCam = this.cameras.main;
-        myCam.setBackgroundColor('#dce2ed');
         myCam.setBounds(0, 0, this.gameWidth * 5, this.gameHeight);
         this.interactionManager = new InteractionManager(this);
 
@@ -143,9 +120,12 @@ export class GameScene extends Phaser.Scene {
             .setScrollFactor(1)
         this.explorer.anims.play('explorer_wind');
 
-        this.player = this.createPlayer();
+        this.player = this.add.sprite(100, this.gameHeight - 220, TextureKeys.DickieMove)
+        .setOrigin(0)
+        .setScale(2)
+        .setDepth(10)
+        .setName(TextureKeys.DickieMove);
         myCam.startFollow(this.player, true, 0.05, 0.05);
-
         this.add.text(this.gameWidth * 1.5, 200, 'Challo?', {
             fontSize: '16px',
             fontFamily: "'Press Start 2P'",
@@ -162,7 +142,7 @@ export class GameScene extends Phaser.Scene {
 
 
         // Item Triggers
-        eventsCenter.on("lookAtItem", (item: InteractiveItem) => {
+        /* eventsCenter.on("lookAtItem", (item: InteractiveItem) => {
             this.scene.launch(SceneKeys.DisplayText, { text: item.getData("lookAtText"), autoDelete: true })
         });
         eventsCenter.on("takeItem", (item: InteractiveItem) => {
@@ -170,25 +150,11 @@ export class GameScene extends Phaser.Scene {
             if (item.getData("removeable")) {
                 item.controller.setState("inInventory");
             }
-        });
+        }); */
 
-        /* ToDo: refactor */
-        eventsCenter.on("interactInWorld", (item: InteractiveItem | PortalItem, pointer: Phaser.Math.Vector2) => {
+       /*  eventsCenter.on("interactInWorld", (item: InteractiveItem | PortalItem, pointer: Phaser.Math.Vector2) => {
             this.scene.launch(SceneKeys.InteractionMenu, { item, pointer })
-            const portalItem = item as PortalItem;
-            if (portalItem.isUnlocked) {
-                this.scene.stop(SceneKeys.InteractionMenu)
-                eventsCenter.destroy();
-                myCam.fadeOut(1000, 0, 0, 0);
-                myCam.once("camerafadeoutcomplete", () => {
-                    this.scene.start(SceneKeys.TentScene)
-                })
-            }
-        })
-
-        this.scene.launch(SceneKeys.Snowfall, {
-            player: this.player,
-        });
+        }); */
 
         // Quest Triggers
         eventsCenter.once("logsStolen", () => this.theBribe.controller.setState("unlocked"))
@@ -198,14 +164,13 @@ export class GameScene extends Phaser.Scene {
         if (!this.logs.active) {
             eventsCenter.emit("logsStolen")
         }
+
         if (this.cursors?.left.isDown) {
             this.velocityX -= 2.5;
-
             this.player.anims.play('left', true);
         }
         else if (this.cursors?.right.isDown) {
             this.velocityX += 5.5;
-
             this.player.anims.play('right', true);
         } else {
             this.velocityX += 0;

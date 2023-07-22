@@ -22,8 +22,7 @@ export default class InteractiveItem extends Phaser.GameObjects.Sprite {
         this.setName(texture);
         this.setDepth(1)
         this.on("pointerdown", (pointer: Phaser.Math.Vector2) => {
-            this.emit("interact", this.itemData, pointer);
-            eventsCenter.emit("interactInWorld", this, pointer);
+            eventsCenter.emit("interact", this, pointer);
         });
         let fx!: Phaser.FX.Shine;
         const text = this.scene.add.text(this.x + (this.width / 2), this.y - 50, this.itemData.name, {

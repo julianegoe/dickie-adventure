@@ -1,8 +1,7 @@
-import { SceneKeys, TextureKeys } from "@/constants";
+import { SceneKeys } from "@/constants";
 import type { Choice, IDialogue } from "@/game-data/characters";
 import type Dialogue from "@/scenes/Dialogue";
 import type { GameScene } from "@/scenes/GameScene";
-import type { Scene } from "phaser";
 
 class DialogueManager {
   private scene!: Dialogue;

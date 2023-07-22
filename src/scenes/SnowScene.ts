@@ -1,8 +1,9 @@
-import { SceneKeys, TextureKeys } from "@/constants";
+import { AudioKeys, SceneKeys, TextureKeys } from "@/constants";
 
 export class SnowScene extends Phaser.Scene {
 
     private player!: Phaser.GameObjects.Sprite;
+    private windSound!: Phaser.Sound.NoAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.WebAudioSound;
 
     constructor() {
         super({ key: SceneKeys.Snowfall });
@@ -14,10 +15,14 @@ export class SnowScene extends Phaser.Scene {
         this.player = data.player
     }
 
+    addSounds() {
+        this.windSound = this.sound.add(AudioKeys.ArcticWinds)
+    }
+
     create() {
         const { width, height } = this.scale;
         this.cameras.main.setSize(this.scale.width, this.scale.height - 100)
-        const particles = this.add.particles(0, 100, TextureKeys.Snow, {
+        this.add.particles(0, 100, TextureKeys.Snow, {
             x: 0,
             y: 0,
             // emitZone
@@ -41,6 +46,16 @@ export class SnowScene extends Phaser.Scene {
             follow: this.player,
             followOffset: { x: -width * 0.5, y: -height - 100 }
         });
+        /* this.addSounds();
+        this.windSound.play({
+            mute: false,
+            volume: 2,
+            rate: 1,
+            detune: 0,
+            seek: 0,
+            loop: true,
+            delay: 0,
+        }) */
 
     }
 

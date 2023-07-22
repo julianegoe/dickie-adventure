@@ -7,6 +7,8 @@ import {BootScene} from "@/scenes/BootScene";
 import { SnowScene } from "./scenes/SnowScene";
 import DisplayText from "./scenes/DisplayText";
 import { TentScene } from "./scenes/TentScene";
+import { Controller } from "./scenes/Controller";
+import { Inventory } from "./scenes/Inventory";
 
 function launch(containerId: string) {
     return new Phaser.Game({
@@ -15,14 +17,7 @@ function launch(containerId: string) {
         height: 580, // 15 * 32
         pixelArt: true,
         parent: containerId,
-        physics: {
-            default: 'arcade',
-            arcade: {
-                gravity: { y: 0 },
-                debug: false
-            }
-        },
-        scene: [BootScene, PreloadScene, GameScene, InteractionMenu, Dialogue, SnowScene, DisplayText, TentScene]
+        scene: [BootScene, PreloadScene, Controller, GameScene, InteractionMenu, Dialogue, Inventory, SnowScene, DisplayText, TentScene]
     })
 }
 

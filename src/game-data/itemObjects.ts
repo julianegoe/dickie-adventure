@@ -37,7 +37,7 @@ let items: Partial<InteractiveItemInterface> =
         removeable: false,
         interactable: true,
         lookAtText: "Ich habe sowas Monströses noch nie gesehen.",
-        takeText: DEFAULT_TAKE_TEXT,
+        takeText: "Es ist geschlossen.",
         frames: [],
         initialFrame: TextureKeys.Tent,
         successText: "Es ist offen.", 

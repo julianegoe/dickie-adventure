@@ -37,6 +37,7 @@ enum TilemapKeys {
 }
 
 enum SceneKeys {
+    Controller = "Controller",
     Preloader = 'PreloadScene',
     Game = 'GameScene',
     InteractionMenu = 'InteractionMenu',
@@ -44,6 +45,7 @@ enum SceneKeys {
     Snowfall = 'Snowfall',
     DisplayText = 'DisplayText',
     TentScene = "TentScene",
+    Inventory = "Inventory"
 }
 
 enum AnimationKeys {

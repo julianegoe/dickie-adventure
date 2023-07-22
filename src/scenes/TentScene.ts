@@ -9,7 +9,7 @@ import Sprite = Phaser.GameObjects.Sprite;
 
 export class TentScene extends Phaser.Scene {
     private cursors!: Phaser.Types.Input.Keyboard.CursorKeys | undefined;
-    private player!: Phaser.GameObjects.Sprite;
+    public player!: Phaser.GameObjects.Sprite;
     private gameWidth!: number;
     private gameHeight!: number;
     private velocityX: number = 0;
@@ -22,7 +22,7 @@ export class TentScene extends Phaser.Scene {
     }
 
     createPlayer() {
-        return this.add.sprite(0, this.gameHeight - 200, TextureKeys.DickieMove)
+        return this.add.sprite(50, this.gameHeight - 200, TextureKeys.DickieMove)
             .setOrigin(0)
     }
 
@@ -34,17 +34,18 @@ export class TentScene extends Phaser.Scene {
     }
 
     create() {
+        this.cursors = this.input.keyboard?.createCursorKeys();
+        this.gameWidth = this.scale.width;
+        this.gameHeight = this.scale.height;
         this.cameras.main.fadeIn(2000, 0, 0, 0);
+        this.cameras.main.setBounds(0,0, this.gameWidth, this.gameHeight);
         this.inventoryManager = new InventoryManager(this);
         const interactionManager = new InteractionManager(this);
         this.inventoryManager.initInventory((gameObject: any, dropZone: any) => {
             interactionManager.useWith(gameObject, dropZone.name as TextureKeys.TentInsideBed)
         });
 
-        this.gameWidth = this.scale.width;
-        this.gameHeight = this.scale.height;
         this.worldItemGroup = this.add.group();
-        this.cursors = this.input.keyboard?.createCursorKeys();
         this.cameras.main.setBackgroundColor('#cccccc');
         const map = this.make.tilemap({ key: 'tent_inside_tilemap' });
         const tileset = map.addTilesetImage('tent_inside', TextureKeys.TentInside);
@@ -57,22 +58,15 @@ export class TentScene extends Phaser.Scene {
         bed.createDropZone(4)
         const skull = this.createInteractableItem(TextureKeys.Skull, 2.5, 500, 350);
         const polygon = this.add.polygon(687, 375, [687, 375, 844, 377, 754, 470, 576, 469, 691, 376], 0xfff)
-        this.player = this.createPlayer().setScale(4);
+        this.player = this.createPlayer()
+        this.player.setScale(4).setDepth(1);
         map.createLayer('tent_inside_foreground', tileset as Phaser.Tilemaps.Tileset, 0, 0)?.setScale(4).setDepth(1);
 
-        // Item Triggers
-        eventsCenter.on("lookAtItem", (item: InteractiveItem) => {
-            this.scene.launch(SceneKeys.DisplayText, { text: item.getData("lookAtText"), autoDelete: true }).bringToTop(SceneKeys.DisplayText)
-        });
-        eventsCenter.on("takeItem", (item: InteractiveItem) => {
-            this.scene.launch(SceneKeys.DisplayText, { text: item.getData("takeText"), autoDelete: true }).bringToTop(SceneKeys.DisplayText);
-            if (item.getData("removeable")) {
-                item.controller.setState("inInventory");
-            }
-        });
-        eventsCenter.on("interactInWorld", (item: InteractiveItem, pointer: Phaser.Math.Vector2) => {
-            this.scene.launch(SceneKeys.InteractionMenu, { pointer, item}).bringToTop(SceneKeys.InteractionMenu)
-        });
+       this.input.on("pointerdown", (pointer: any) => {
+        if (!this.cameras.main.getBounds().setSize(this.gameWidth - 100).setPosition(50, 0).contains(pointer.x, pointer.y)) {
+            eventsCenter.emit("leavingTent")
+        }
+       })
 
     }
 

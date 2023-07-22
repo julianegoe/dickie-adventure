@@ -14,6 +14,7 @@
   "dependencies": {
     "@types/webfontloader": "^1.6.35",
     "phaser": "^3.60.0",
+    "phaser-plugin-scene-watcher": "^6.0.0",
     "pinia": "^2.0.32",
     "vue": "^3.2.47",
     "webfontloader": "^1.6.28"

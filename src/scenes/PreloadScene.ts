@@ -89,6 +89,6 @@ export class PreloadScene extends Phaser.Scene {
         this.createAnimations();
         this.createExplorerAnimation();
         this.input.setDefaultCursor('url(/crosshair.cur), pointer');
-        this.scene.start(SceneKeys.Game);
+        this.scene.start(SceneKeys.Controller);
     }
 }
